@@ -345,11 +345,80 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-const PASS='1200';
+// ---- USER CONFIG ----
+const USERS={
+  king:{name:'King',emoji:'👑',pinKey:'pin_king',defaultPin:'1200'},
+  farman:{name:'Farman',emoji:'🤝',pinKey:'pin_farman',defaultPin:'1200'}
+};
+const ID_CARD='3320243342401';
+let currentUser=null;
+let changeUser=null;
 
+function getPin(u){return localStorage.getItem(USERS[u].pinKey)||USERS[u].defaultPin;}
+function setPin(u,p){localStorage.setItem(USERS[u].pinKey,p);}
+
+function selectUser(u){
+  currentUser=u;
+  document.getElementById('btnKing').style.borderColor=u==='king'?'var(--accent)':'var(--border)';
+  document.getElementById('btnKing').style.color=u==='king'?'var(--accent)':'var(--text)';
+  document.getElementById('btnFarman').style.borderColor=u==='farman'?'var(--accent)':'var(--border)';
+  document.getElementById('btnFarman').style.color=u==='farman'?'var(--accent)':'var(--text)';
+  document.getElementById('pinLabel').textContent=USERS[u].emoji+' '+USERS[u].name+' ka PIN';
+  pinVal='';
+  for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled');
+  document.getElementById('passError').style.display='none';
+}
+
+function showChangePass(){
+  document.getElementById('idCardInput').value='';
+  document.getElementById('newPassSection').style.display='none';
+  document.getElementById('idVerifyError').style.display='none';
+  document.getElementById('verifyBtn').style.display='block';
+  document.getElementById('changePinError').style.display='none';
+  changeUser=null;
+  document.getElementById('chgBtnKing').style.borderColor='var(--border)';
+  document.getElementById('chgBtnFarman').style.borderColor='var(--border)';
+  openModal('change-pass');
+}
+
+function selectChangeUser(u){
+  changeUser=u;
+  document.getElementById('chgBtnKing').style.borderColor=u==='king'?'var(--accent)':'var(--border)';
+  document.getElementById('chgBtnFarman').style.borderColor=u==='farman'?'var(--accent)':'var(--border)';
+}
+
+function verifyId(){
+  const val=document.getElementById('idCardInput').value.trim();
+  if(val===ID_CARD){
+    document.getElementById('idVerifyError').style.display='none';
+    document.getElementById('newPassSection').style.display='block';
+    document.getElementById('verifyBtn').style.display='none';
+  } else {
+    document.getElementById('idVerifyError').style.display='block';
+  }
+}
+
+function doChangePass(){
+  if(!changeUser){alert('Pehle user select karo');return;}
+  const p1=document.getElementById('newPinInput').value.trim();
+  const p2=document.getElementById('newPinConfirm').value.trim();
+  const err=document.getElementById('changePinError');
+  if(p1.length<4){err.textContent='PIN 4 digits ka hona chahiye';err.style.display='block';return;}
+  if(p1!==p2){err.textContent='PIN match nahi kiya';err.style.display='block';return;}
+  setPin(changeUser,p1);
+  err.style.display='none';
+  closeModal('change-pass');
+  alert(USERS[changeUser].name+' ka PIN change ho gaya!');
+}
+
+// ---- PIN PAD ----
 let pinVal='';
 function pinPress(n){
-  if(!currentUser){alert('Pehle apna naam select karo');return;}
+  if(!currentUser){
+    document.getElementById('passError').textContent='Pehle naam select karo';
+    document.getElementById('passError').style.display='block';
+    return;
+  }
   if(pinVal.length>=4)return;
   pinVal+=n;
   document.getElementById('d'+(pinVal.length-1)).classList.add('filled');
@@ -359,7 +428,6 @@ function pinPress(n){
         sessionStorage.setItem('auth',currentUser);
         document.getElementById('lockScreen').style.display='none';
         document.getElementById('mainApp').style.display='block';
-        // Update header with user name
         document.getElementById('userNameBadge').textContent=USERS[currentUser].emoji+' '+USERS[currentUser].name;
         initApp();
       } else {
@@ -377,9 +445,12 @@ function pinDel(){
   document.getElementById('passError').style.display='none';
 }
 
-if(sessionStorage.getItem('auth')==='1'){
+const _savedAuth=sessionStorage.getItem('auth');
+if(_savedAuth&&USERS[_savedAuth]){
+  currentUser=_savedAuth;
   document.getElementById('lockScreen').style.display='none';
   document.getElementById('mainApp').style.display='block';
+  document.getElementById('userNameBadge').textContent=USERS[_savedAuth].emoji+' '+USERS[_savedAuth].name;
 }
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
