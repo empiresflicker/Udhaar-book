@@ -205,7 +205,7 @@
     <div id="customerList"><div class="loading"><div class="spinner"></div>Load ho raha hai...</div></div>
   </div>
 
-  <button class="fab" onclick="openModal('add-customer')">+</button>
+  <button class="fab" onclick="openAddCustomer()">+</button>
 </div>
 
 <!-- Add Customer -->
@@ -214,7 +214,7 @@
     <div class="modal-title">➕ Naya Customer</div>
     <div class="form-group"><label>Naam</label><input type="text" id="newName" placeholder="Customer ka naam..."/></div>
     <div class="form-group"><label>Phone (Optional)</label><input type="tel" id="newPhone" placeholder="03XX-XXXXXXX"/></div>
-    <div class="form-group"><label>Business (Optional)</label><select id="newBiz"><option value="">-- Business select karo --</option></select></div>
+    <div class="form-group"><label>Business (Optional)</label><div id="bizCheckList" style="display:flex;flex-direction:column;gap:8px;padding:4px 0"></div></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('add-customer')">Cancel</button>
       <button class="btn-save" onclick="addCustomer()">Save</button>
@@ -384,8 +384,13 @@ function initApp(){
   }
 
   function renderBizSelect(){
-    document.getElementById('newBiz').innerHTML='<option value="">-- Business select karo --</option>'+
-      businesses.map(b=>`<option value="${b.id}">${b.name}</option>`).join('');
+    const el=document.getElementById('bizCheckList');
+    if(!businesses.length){el.innerHTML='<div style="color:var(--muted);font-size:13px">Pehle business banao</div>';return;}
+    el.innerHTML=businesses.map(b=>`
+      <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;cursor:pointer">
+        <input type="checkbox" class="biz-check" value="${b.id}" ${currentBiz===b.id?'checked':''} style="width:18px;height:18px;accent-color:var(--accent)"/>
+        <span style="font-size:14px">${b.name}</span>
+      </label>`).join('');
   }
 
   function renderBizManage(){
@@ -432,7 +437,7 @@ function initApp(){
   function render(){
     const search=document.getElementById('searchBox').value.toLowerCase();
     let list=customers.filter(c=>c.name.toLowerCase().includes(search));
-    if(currentBiz!=='all')list=list.filter(c=>c.bizId===currentBiz);
+    if(currentBiz!=='all')list=list.filter(c=>(c.bizIds||[c.bizId||'']).includes(currentBiz));
     if(currentFilter==='mile')list=list.filter(c=>getBalance(c.id)>0);
     if(currentFilter==='diye')list=list.filter(c=>getBalance(c.id)<0);
 
@@ -448,7 +453,8 @@ function initApp(){
       const bc=bal>0?'mile':bal<0?'diye':'zero';
       const bl=bal>0?'Aap Ko Mile':bal<0?'Aap Ne Diye':'Barabar';
       const cTx=transactions.filter(t=>t.custId===c.id);
-      const bizName=businesses.find(b=>b.id===c.bizId)?.name||'';
+      const custBizIds=c.bizIds||[c.bizId||''];
+      const bizName=custBizIds.map(id=>businesses.find(b=>b.id===id)?.name||'').filter(Boolean).join(', ');
 
       const txHtml=cTx.length?cTx.map(t=>`
         <div class="tx-item">
@@ -494,8 +500,9 @@ function initApp(){
   window.addCustomer=()=>{
     const n=document.getElementById('newName').value.trim();
     if(!n){alert('Naam likho');return;}
-    db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),bizId:document.getElementById('newBiz').value||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()})
-    .then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';document.getElementById('newBiz').value='';closeModal('add-customer');});
+    const selectedBizIds=Array.from(document.querySelectorAll('.biz-check:checked')).map(cb=>cb.value);
+    db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),bizIds:selectedBizIds,createdAt:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';closeModal('add-customer');});
   };
 
   window.delCust=(id,e)=>{e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('customers').doc(id).delete();transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete());if(activeId===id)activeId=null;};
@@ -521,6 +528,12 @@ function initApp(){
   window.delTx=(id,e)=>{e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('transactions').doc(id).delete();};
   window.undoTx=id=>{if(!confirm('Yeh transaction hata do?'))return;db.collection('transactions').doc(id).delete();};
   window.setFilter=(f,btn)=>{currentFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
+  window.openAddCustomer=()=>{
+    document.getElementById('newName').value='';
+    document.getElementById('newPhone').value='';
+    renderBizSelect();
+    openModal('add-customer');
+  };
 }
 
 if(sessionStorage.getItem('auth')==='1')initApp();
