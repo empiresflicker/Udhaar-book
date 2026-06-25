@@ -151,8 +151,7 @@
   <div class="lock-icon">🔐</div>
   <div class="lock-title">Udhaar Book</div>
   <div class="lock-sub">Password enter karo</div>
-  <input class="lock-input" type="password" id="passInput" placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')checkPass()"/>
-  <button class="lock-btn" onclick="checkPass()">Kholo</button>
+  <input class="lock-input" type="tel" id="passInput" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length===4)checkPass()"/>
   <div class="lock-error" id="passError">❌ Galat password</div>
 </div>
 
