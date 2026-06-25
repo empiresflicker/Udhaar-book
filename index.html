@@ -15,15 +15,15 @@
   :root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;--accent:#e8a020;--green:#27ae60;--red:#e74c3c;--text:#f0f0f0;--muted:#888;--card:#1e1e1e}
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
 
-  #lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:30px;padding-bottom:60px}
-  .lock-icon{font-size:55px;margin-bottom:12px}
-  .lock-title{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  #lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:0;overflow-y:auto}
+  .lock-icon{font-size:44px;margin-bottom:8px}
+  .lock-title{font-size:20px;font-weight:700;color:var(--accent);margin-bottom:4px}
   .lock-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
-  .pin-dots{display:flex;gap:14px;margin-bottom:20px}
+  .pin-dots{display:flex;gap:12px;margin-bottom:16px}
   .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:background 0.15s}
   .pin-dot.filled{background:var(--accent);border-color:var(--accent)}
-  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
-  .pin-btn{padding:18px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:22px;font-weight:600;cursor:pointer;text-align:center;user-select:none}
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:260px}
+  .pin-btn{padding:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:20px;font-weight:600;cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none;touch-action:manipulation}
   .pin-btn:active{background:var(--accent);color:#000}
   .pin-btn.del{font-size:18px;color:var(--muted)}
   .pin-btn.empty{background:transparent;border:none;cursor:default}
@@ -163,8 +163,8 @@
   <div id="userSelect" style="width:100%;max-width:280px;margin-bottom:20px">
     <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Aap kaun hain?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onclick="selectUser('king')" id="btnKing" style="padding:12px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer">👑 King</button>
-      <button onclick="selectUser('farman')" id="btnFarman" style="padding:12px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer">🤝 Farman</button>
+      <button onclick="selectUser('king')" id="btnKing" style="padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent">👑 King</button>
+      <button onclick="selectUser('farman')" id="btnFarman" style="padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent">🤝 Farman</button>
     </div>
   </div>
 
