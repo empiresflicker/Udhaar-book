@@ -13,12 +13,19 @@
 <title>Udhaar Book</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424;
-    --border: #2e2e2e; --accent: #e8a020; --green: #27ae60;
-    --red: #e74c3c; --text: #f0f0f0; --muted: #888; --card: #1e1e1e;
-  }
+  :root { --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424; --border: #2e2e2e; --accent: #e8a020; --green: #27ae60; --red: #e74c3c; --text: #f0f0f0; --muted: #888; --card: #1e1e1e; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; overscroll-behavior: none; }
+
+  /* Lock Screen */
+  #lockScreen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+  .lock-icon { font-size: 60px; margin-bottom: 16px; }
+  .lock-title { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+  .lock-sub { font-size: 13px; color: var(--muted); margin-bottom: 30px; }
+  .lock-input { width: 100%; max-width: 280px; background: var(--surface2); border: 2px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; font-size: 20px; text-align: center; outline: none; letter-spacing: 4px; margin-bottom: 14px; }
+  .lock-input:focus { border-color: var(--accent); }
+  .lock-btn { width: 100%; max-width: 280px; padding: 14px; background: var(--accent); border: none; color: #000; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .lock-error { color: var(--red); font-size: 13px; margin-top: 10px; display: none; }
+
   header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top)); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   header h1 { font-size: 18px; font-weight: 700; color: var(--accent); }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 6px; }
@@ -90,35 +97,43 @@
   .loading { text-align: center; padding: 40px; color: var(--muted); }
   .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Install banner */
-  #installBanner { display: none; background: var(--accent); color: #000; padding: 10px 16px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
 </style>
 </head>
 <body>
 
-<div id="installBanner" onclick="installApp()">📲 Home Screen pe Install karo — tap karo!</div>
-
-<header>
-  <h1>📒 Udhaar Book</h1>
-  <div><span class="sync-dot" id="syncDot"></span><span id="syncStatus" style="font-size:11px;color:var(--muted)">Connecting...</span></div>
-</header>
-
-<div class="main">
-  <div class="summary">
-    <div class="sum-card lena"><div class="lbl">Maine Lena Hai</div><div class="amt" id="totalLena">Rs. 0</div></div>
-    <div class="sum-card dena"><div class="lbl">Maine Dena Hai</div><div class="amt" id="totalDena">Rs. 0</div></div>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="setFilter('all',this)">Sab</button>
-    <button class="tab-btn" onclick="setFilter('lena',this)">Lena</button>
-    <button class="tab-btn" onclick="setFilter('dena',this)">Dena</button>
-  </div>
-  <input class="search-box" type="text" placeholder="🔍 Customer dhundo..." oninput="render()" id="searchBox" />
-  <div id="customerList"><div class="loading"><div class="spinner"></div>Load ho raha hai...</div></div>
+<!-- Lock Screen -->
+<div id="lockScreen">
+  <div class="lock-icon">🔐</div>
+  <div class="lock-title">Udhaar Book</div>
+  <div class="lock-sub">Password enter karo</div>
+  <input class="lock-input" type="password" id="passInput" placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')checkPass()" />
+  <button class="lock-btn" onclick="checkPass()">Kholo</button>
+  <div class="lock-error" id="passError">❌ Galat password</div>
 </div>
 
-<button class="fab" onclick="openModal('add-customer')">+</button>
+<!-- Main App -->
+<div id="mainApp" style="display:none">
+  <header>
+    <h1>📒 Udhaar Book</h1>
+    <div><span class="sync-dot" id="syncDot"></span><span id="syncStatus" style="font-size:11px;color:var(--muted)">Connecting...</span></div>
+  </header>
+
+  <div class="main">
+    <div class="summary">
+      <div class="sum-card lena"><div class="lbl">Maine Lena Hai</div><div class="amt" id="totalLena">Rs. 0</div></div>
+      <div class="sum-card dena"><div class="lbl">Maine Dena Hai</div><div class="amt" id="totalDena">Rs. 0</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setFilter('all',this)">Sab</button>
+      <button class="tab-btn" onclick="setFilter('lena',this)">Lena</button>
+      <button class="tab-btn" onclick="setFilter('dena',this)">Dena</button>
+    </div>
+    <input class="search-box" type="text" placeholder="🔍 Customer dhundo..." oninput="render()" id="searchBox" />
+    <div id="customerList"><div class="loading"><div class="spinner"></div>Load ho raha hai...</div></div>
+  </div>
+
+  <button class="fab" onclick="openModal('add-customer')">+</button>
+</div>
 
 <div class="modal-overlay" id="modal-add-customer">
   <div class="modal">
@@ -156,24 +171,26 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-  // PWA Install
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('installBanner').style.display = 'block';
-  });
-  window.addEventListener('appinstalled', () => {
-    document.getElementById('installBanner').style.display = 'none';
-  });
-  function installApp() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        document.getElementById('installBanner').style.display = 'none';
-      });
+  // Password check
+  const PASS = '1200';
+  function checkPass() {
+    const val = document.getElementById('passInput').value;
+    if (val === PASS) {
+      sessionStorage.setItem('auth', '1');
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      initFirebase();
+    } else {
+      document.getElementById('passError').style.display = 'block';
+      document.getElementById('passInput').value = '';
+      document.getElementById('passInput').focus();
     }
+  }
+
+  // Auto-unlock if already logged in this session
+  if (sessionStorage.getItem('auth') === '1') {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
   }
 
   // Service Worker
@@ -181,91 +198,96 @@
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 
-  // Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDr_nh2KkVJtZ2Pw2jXK5ys_gxdRn6WD8o",
-    authDomain: "udhaar-app-da4dc.firebaseapp.com",
-    projectId: "udhaar-app-da4dc",
-    storageBucket: "udhaar-app-da4dc.firebasestorage.app",
-    messagingSenderId: "471472265354",
-    appId: "1:471472265354:web:2a3c2cf0b459c141493573"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  function initFirebase() {
+    const firebaseConfig = {
+      apiKey: "AIzaSyDr_nh2KkVJtZ2Pw2jXK5ys_gxdRn6WD8o",
+      authDomain: "udhaar-app-da4dc.firebaseapp.com",
+      projectId: "udhaar-app-da4dc",
+      storageBucket: "udhaar-app-da4dc.firebasestorage.app",
+      messagingSenderId: "471472265354",
+      appId: "1:471472265354:web:2a3c2cf0b459c141493573"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  let customers = [], transactions = [], activeId = null, currentType = 'lena', currentFilter = 'all';
+    let customers = [], transactions = [], activeId = null, currentType = 'lena', currentFilter = 'all';
 
-  function setOnline() { document.getElementById('syncDot').className='sync-dot'; document.getElementById('syncStatus').textContent='Online'; }
-  function setOffline() { document.getElementById('syncDot').className='sync-dot offline'; document.getElementById('syncStatus').textContent='Offline'; }
+    function setOnline() { document.getElementById('syncDot').className='sync-dot'; document.getElementById('syncStatus').textContent='Online'; }
+    function setOffline() { document.getElementById('syncDot').className='sync-dot offline'; document.getElementById('syncStatus').textContent='Offline'; }
 
-  db.collection('customers').orderBy('createdAt','asc').onSnapshot(snap => {
-    customers = snap.docs.map(d => ({id:d.id,...d.data()}));
-    setOnline(); render();
-  }, () => setOffline());
+    db.collection('customers').orderBy('createdAt','asc').onSnapshot(snap => {
+      customers = snap.docs.map(d => ({id:d.id,...d.data()}));
+      setOnline(); render();
+    }, () => setOffline());
 
-  db.collection('transactions').orderBy('date','desc').onSnapshot(snap => {
-    transactions = snap.docs.map(d => ({id:d.id,...d.data()}));
-    render();
-  });
+    db.collection('transactions').orderBy('date','desc').onSnapshot(snap => {
+      transactions = snap.docs.map(d => ({id:d.id,...d.data()}));
+      render();
+    });
 
-  function getBalance(cid) {
-    return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='lena'?t.amount:-t.amount),0);
-  }
-  function fmt(d) { return d ? new Date(d).toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'}) : ''; }
+    function getBalance(cid) {
+      return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='lena'?t.amount:-t.amount),0);
+    }
+    function fmt(d) { return d ? new Date(d).toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'}) : ''; }
 
-  function render() {
-    const search = document.getElementById('searchBox').value.toLowerCase();
-    let list = customers.filter(c=>c.name.toLowerCase().includes(search));
-    if (currentFilter==='lena') list=list.filter(c=>getBalance(c.id)>0);
-    if (currentFilter==='dena') list=list.filter(c=>getBalance(c.id)<0);
+    window.render = function() {
+      const search = document.getElementById('searchBox').value.toLowerCase();
+      let list = customers.filter(c=>c.name.toLowerCase().includes(search));
+      if (currentFilter==='lena') list=list.filter(c=>getBalance(c.id)>0);
+      if (currentFilter==='dena') list=list.filter(c=>getBalance(c.id)<0);
 
-    let tL=0,tD=0;
-    customers.forEach(c=>{const b=getBalance(c.id);if(b>0)tL+=b;else tD+=Math.abs(b);});
-    document.getElementById('totalLena').textContent='Rs. '+tL.toLocaleString();
-    document.getElementById('totalDena').textContent='Rs. '+tD.toLocaleString();
+      let tL=0,tD=0;
+      customers.forEach(c=>{const b=getBalance(c.id);if(b>0)tL+=b;else tD+=Math.abs(b);});
+      document.getElementById('totalLena').textContent='Rs. '+tL.toLocaleString();
+      document.getElementById('totalDena').textContent='Rs. '+tD.toLocaleString();
 
-    if(!list.length){document.getElementById('customerList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>';return;}
+      if(!list.length){document.getElementById('customerList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>';return;}
 
-    document.getElementById('customerList').innerHTML=list.map(c=>{
-      const bal=getBalance(c.id);
-      const bc=bal>0?'lena':bal<0?'dena':'zero';
-      const bl=bal>0?'Maine Lena':bal<0?'Maine Dena':'Barabar';
-      const cTx=transactions.filter(t=>t.custId===c.id);
-      const txHtml=cTx.length?cTx.map(t=>`
-        <div class="tx-item">
-          <div class="tx-dot ${t.type}"></div>
-          <div class="tx-detail"><div class="tx-name">${t.item||'Entry'}</div><div class="tx-date">${fmt(t.date)}</div></div>
-          <div class="tx-amt ${t.type}">${t.type==='lena'?'+':'-'}Rs. ${Number(t.amount).toLocaleString()}</div>
-          <button class="tx-del" onclick="delTx('${t.id}',event)">×</button>
-        </div>`).join(''):'<div class="empty-tx">Koi entry nahi</div>';
-      return `<div class="customer-card ${activeId===c.id?'active':''}" id="card-${c.id}">
-        <div class="customer-header" onclick="toggleCust('${c.id}')">
-          <div class="avatar">${c.name.charAt(0).toUpperCase()}</div>
-          <div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-meta">${c.phone||''} · ${cTx.length} entry</div></div>
-          <div class="cust-bal"><div class="bal-amt ${bc}">Rs. ${Math.abs(bal).toLocaleString()}</div><div class="bal-lbl">${bl}</div></div>
-        </div>
-        <div class="transactions">
-          <div class="tx-hdr"><span class="tx-title">Transactions</span><button class="btn-del-cust" onclick="delCust('${c.id}',event)">🗑 Delete</button></div>
-          <div>${txHtml}</div>
-          <div class="tx-actions">
-            <button class="btn-lena" onclick="openTx('${c.id}','lena')">+ Maine Lena</button>
-            <button class="btn-dena" onclick="openTx('${c.id}','dena')">+ Maine Dena</button>
+      document.getElementById('customerList').innerHTML=list.map(c=>{
+        const bal=getBalance(c.id);
+        const bc=bal>0?'lena':bal<0?'dena':'zero';
+        const bl=bal>0?'Maine Lena':bal<0?'Maine Dena':'Barabar';
+        const cTx=transactions.filter(t=>t.custId===c.id);
+        const txHtml=cTx.length?cTx.map(t=>`
+          <div class="tx-item">
+            <div class="tx-dot ${t.type}"></div>
+            <div class="tx-detail"><div class="tx-name">${t.item||'Entry'}</div><div class="tx-date">${fmt(t.date)}</div></div>
+            <div class="tx-amt ${t.type}">${t.type==='lena'?'+':'-'}Rs. ${Number(t.amount).toLocaleString()}</div>
+            <button class="tx-del" onclick="delTx('${t.id}',event)">×</button>
+          </div>`).join(''):'<div class="empty-tx">Koi entry nahi</div>';
+        return `<div class="customer-card ${activeId===c.id?'active':''}" id="card-${c.id}">
+          <div class="customer-header" onclick="toggleCust('${c.id}')">
+            <div class="avatar">${c.name.charAt(0).toUpperCase()}</div>
+            <div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-meta">${c.phone||''} · ${cTx.length} entry</div></div>
+            <div class="cust-bal"><div class="bal-amt ${bc}">Rs. ${Math.abs(bal).toLocaleString()}</div><div class="bal-lbl">${bl}</div></div>
           </div>
-        </div>
-      </div>`;
-    }).join('');
+          <div class="transactions">
+            <div class="tx-hdr"><span class="tx-title">Transactions</span><button class="btn-del-cust" onclick="delCust('${c.id}',event)">🗑 Delete</button></div>
+            <div>${txHtml}</div>
+            <div class="tx-actions">
+              <button class="btn-lena" onclick="openTx('${c.id}','lena')">+ Maine Lena</button>
+              <button class="btn-dena" onclick="openTx('${c.id}','dena')">+ Maine Dena</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.toggleCust = id => { activeId=activeId===id?null:id; render(); if(activeId)setTimeout(()=>document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'}),50); };
+    window.addCustomer = () => { const n=document.getElementById('newName').value.trim(); if(!n){alert('Naam likho');return;} db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';closeModal('add-customer');}); };
+    window.delCust = (id,e) => { e.stopPropagation(); if(!confirm('Delete karo?'))return; db.collection('customers').doc(id).delete(); transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete()); if(activeId===id)activeId=null; };
+    window.openTx = (cid,type) => { document.getElementById('txCustId').value=cid; pickType(type); document.getElementById('txDate').value=new Date().toISOString().split('T')[0]; document.getElementById('txAmt').value=''; document.getElementById('txItem').value=''; openModal('add-tx'); };
+    window.pickType = type => { currentType=type; document.getElementById('btnLena').className='type-btn lena'+(type==='lena'?' sel':''); document.getElementById('btnDena').className='type-btn dena'+(type==='dena'?' sel':''); };
+    window.addTx = () => { const a=parseFloat(document.getElementById('txAmt').value); if(!a||a<=0){alert('Amount likho');return;} db.collection('transactions').add({custId:document.getElementById('txCustId').value,type:currentType,amount:a,item:document.getElementById('txItem').value.trim(),date:document.getElementById('txDate').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>closeModal('add-tx')); };
+    window.delTx = (id,e) => { e.stopPropagation(); if(!confirm('Delete karo?'))return; db.collection('transactions').doc(id).delete(); };
+    window.setFilter = (f,btn) => { currentFilter=f; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); };
   }
 
-  function toggleCust(id){activeId=activeId===id?null:id;render();if(activeId)setTimeout(()=>document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'}),50);}
-  function addCustomer(){const n=document.getElementById('newName').value.trim();if(!n){alert('Naam likho');return;}db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';closeModal('add-customer');});}
-  function delCust(id,e){e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('customers').doc(id).delete();transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete());if(activeId===id)activeId=null;}
-  function openTx(cid,type){document.getElementById('txCustId').value=cid;pickType(type);document.getElementById('txDate').value=new Date().toISOString().split('T')[0];document.getElementById('txAmt').value='';document.getElementById('txItem').value='';openModal('add-tx');}
-  function pickType(type){currentType=type;document.getElementById('btnLena').className='type-btn lena'+(type==='lena'?' sel':'');document.getElementById('btnDena').className='type-btn dena'+(type==='dena'?' sel':'');}
-  function addTx(){const a=parseFloat(document.getElementById('txAmt').value);if(!a||a<=0){alert('Amount likho');return;}db.collection('transactions').add({custId:document.getElementById('txCustId').value,type:currentType,amount:a,item:document.getElementById('txItem').value.trim(),date:document.getElementById('txDate').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>closeModal('add-tx'));}
-  function delTx(id,e){e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('transactions').doc(id).delete();}
-  function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
-  function openModal(n){document.getElementById('modal-'+n).classList.add('open');}
-  function closeModal(n){document.getElementById('modal-'+n).classList.remove('open');}
+  // If already authed, init firebase immediately
+  if (sessionStorage.getItem('auth') === '1') initFirebase();
+
+  window.openModal = n => document.getElementById('modal-'+n).classList.add('open');
+  window.closeModal = n => document.getElementById('modal-'+n).classList.remove('open');
   document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 </script>
 </body>
