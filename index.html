@@ -30,18 +30,30 @@
   header h1 { font-size: 18px; font-weight: 700; color: var(--accent); }
   .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 6px; }
   .sync-dot.offline { background: var(--red); }
+
   .main { max-width: 680px; margin: 0 auto; padding: 14px; padding-bottom: 80px; }
+
   .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .sum-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
   .sum-card .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
   .sum-card .amt { font-size: 20px; font-weight: 700; }
   .sum-card.lena .amt { color: var(--red); }
   .sum-card.dena .amt { color: var(--green); }
+
+  /* Category tabs */
+  .cat-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; scrollbar-width: none; }
+  .cat-bar::-webkit-scrollbar { display: none; }
+  .cat-chip { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-size: 12px; cursor: pointer; white-space: nowrap; }
+  .cat-chip.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .cat-chip.manage { border-style: dashed; }
+
   .tabs { display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
   .tab-btn { padding: 7px 14px; background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
   .search-box { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 12px; outline: none; }
   .search-box:focus { border-color: var(--accent); }
+
   .customer-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
   .customer-card.active { border-color: var(--accent); }
   .customer-header { display: flex; align-items: center; padding: 12px 14px; gap: 10px; cursor: pointer; user-select: none; }
@@ -49,12 +61,14 @@
   .cust-info { flex: 1; }
   .cust-name { font-weight: 600; font-size: 14px; }
   .cust-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cust-cat { display: inline-block; font-size: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--accent); padding: 1px 7px; border-radius: 10px; margin-top: 3px; }
   .cust-bal { text-align: right; }
   .bal-amt { font-size: 15px; font-weight: 700; }
   .bal-amt.lena { color: var(--red); }
   .bal-amt.dena { color: var(--green); }
   .bal-amt.zero { color: var(--muted); }
   .bal-lbl { font-size: 10px; color: var(--muted); }
+
   .transactions { padding: 0 14px 14px; border-top: 1px solid var(--border); display: none; }
   .customer-card.active .transactions { display: block; }
   .tx-hdr { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 6px; }
@@ -76,16 +90,19 @@
   .btn-dena { padding: 9px; border: none; border-radius: 7px; background: var(--green); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
   .empty-tx { text-align: center; padding: 16px; color: var(--muted); font-size: 12px; }
   .no-cust { text-align: center; padding: 50px 20px; color: var(--muted); }
+
   .fab { position: fixed; bottom: calc(22px + env(safe-area-inset-bottom)); right: 22px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #000; border: none; font-size: 28px; cursor: pointer; box-shadow: 0 4px 18px rgba(232,160,32,0.5); display: flex; align-items: center; justify-content: center; z-index: 200; }
+
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border-radius: 18px 18px 0 0; padding: 22px 18px; padding-bottom: calc(36px + env(safe-area-inset-bottom)); width: 100%; max-width: 680px; animation: slideUp 0.22s ease; }
+  .modal { background: var(--surface); border-radius: 18px 18px 0 0; padding: 22px 18px; padding-bottom: calc(36px + env(safe-area-inset-bottom)); width: 100%; max-width: 680px; animation: slideUp 0.22s ease; max-height: 90vh; overflow-y: auto; }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 18px; color: var(--accent); }
   .form-group { margin-bottom: 12px; }
   .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
-  .form-group input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 11px 13px; border-radius: 8px; font-size: 16px; outline: none; }
-  .form-group input:focus { border-color: var(--accent); }
+  .form-group input, .form-group select { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 11px 13px; border-radius: 8px; font-size: 16px; outline: none; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--surface2); }
   .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .type-btn { padding: 11px; border: 2px solid var(--border); border-radius: 8px; background: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .type-btn.lena.sel { border-color: var(--red); color: var(--red); background: rgba(231,76,60,0.1); }
@@ -94,6 +111,13 @@
   .btn-cancel { padding: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); border-radius: 8px; font-size: 14px; cursor: pointer; }
   .btn-save { padding: 12px; background: var(--accent); border: none; color: #000; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
   .btn-del-cust { background: none; border: 1px solid var(--red); color: var(--red); padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+
+  /* Category management */
+  .cat-list-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .cat-list-item:last-child { border-bottom: none; }
+  .cat-list-name { font-size: 14px; }
+  .cat-del-btn { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; }
+
   .loading { text-align: center; padding: 40px; color: var(--muted); }
   .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -123,6 +147,10 @@
       <div class="sum-card lena"><div class="lbl">Maine Lena Hai</div><div class="amt" id="totalLena">Rs. 0</div></div>
       <div class="sum-card dena"><div class="lbl">Maine Dena Hai</div><div class="amt" id="totalDena">Rs. 0</div></div>
     </div>
+
+    <!-- Categories -->
+    <div class="cat-bar" id="catBar"></div>
+
     <div class="tabs">
       <button class="tab-btn active" onclick="setFilter('all',this)">Sab</button>
       <button class="tab-btn" onclick="setFilter('lena',this)">Lena</button>
@@ -135,11 +163,16 @@
   <button class="fab" onclick="openModal('add-customer')">+</button>
 </div>
 
+<!-- Add Customer Modal -->
 <div class="modal-overlay" id="modal-add-customer">
   <div class="modal">
     <div class="modal-title">➕ Naya Customer</div>
     <div class="form-group"><label>Naam</label><input type="text" id="newName" placeholder="Customer ka naam..." /></div>
     <div class="form-group"><label>Phone (Optional)</label><input type="tel" id="newPhone" placeholder="03XX-XXXXXXX" /></div>
+    <div class="form-group">
+      <label>Category (Optional)</label>
+      <select id="newCat"><option value="">-- Category select karo --</option></select>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('add-customer')">Cancel</button>
       <button class="btn-save" onclick="addCustomer()">Save</button>
@@ -147,6 +180,7 @@
   </div>
 </div>
 
+<!-- Add Transaction Modal -->
 <div class="modal-overlay" id="modal-add-tx">
   <div class="modal">
     <div class="modal-title">💰 Entry Karo</div>
@@ -160,7 +194,6 @@
     </div>
     <div class="form-group"><label>Amount (Rs.)</label><input type="number" id="txAmt" placeholder="0" inputmode="numeric" /></div>
     <div class="form-group"><label>Item / Wajah</label><input type="text" id="txItem" placeholder="Milk, Coke, Kapra..." /></div>
-    <div class="form-group"><label>Tarikh</label><input type="date" id="txDate" /></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('add-tx')">Cancel</button>
       <button class="btn-save" onclick="addTx()">Save</button>
@@ -168,18 +201,33 @@
   </div>
 </div>
 
+<!-- Manage Categories Modal -->
+<div class="modal-overlay" id="modal-categories">
+  <div class="modal">
+    <div class="modal-title">🗂 Categories</div>
+    <div class="form-group" style="display:flex;gap:8px">
+      <input type="text" id="newCatName" placeholder="Nai category..." style="flex:1" />
+      <button class="btn-save" style="width:auto;padding:11px 16px" onclick="addCategory()">Add</button>
+    </div>
+    <div id="catListManage"></div>
+    <div class="modal-actions" style="grid-template-columns:1fr">
+      <button class="btn-cancel" onclick="closeModal('categories')">Done</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-  // Password check
   const PASS = '1200';
+
   function checkPass() {
     const val = document.getElementById('passInput').value;
     if (val === PASS) {
       sessionStorage.setItem('auth', '1');
       document.getElementById('lockScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
-      initFirebase();
+      initApp();
     } else {
       document.getElementById('passError').style.display = 'block';
       document.getElementById('passInput').value = '';
@@ -187,18 +235,14 @@
     }
   }
 
-  // Auto-unlock if already logged in this session
   if (sessionStorage.getItem('auth') === '1') {
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
   }
 
-  // Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 
-  function initFirebase() {
+  function initApp() {
     const firebaseConfig = {
       apiKey: "AIzaSyDr_nh2KkVJtZ2Pw2jXK5ys_gxdRn6WD8o",
       authDomain: "udhaar-app-da4dc.firebaseapp.com",
@@ -210,56 +254,109 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let customers = [], transactions = [], activeId = null, currentType = 'lena', currentFilter = 'all';
+    let customers = [], transactions = [], categories = [];
+    let activeId = null, currentType = 'lena', currentFilter = 'all', currentCat = 'all';
 
     function setOnline() { document.getElementById('syncDot').className='sync-dot'; document.getElementById('syncStatus').textContent='Online'; }
     function setOffline() { document.getElementById('syncDot').className='sync-dot offline'; document.getElementById('syncStatus').textContent='Offline'; }
 
-    db.collection('customers').orderBy('createdAt','asc').onSnapshot(snap => {
-      customers = snap.docs.map(d => ({id:d.id,...d.data()}));
-      setOnline(); render();
-    }, () => setOffline());
+    // Listeners
+    db.collection('customers').orderBy('createdAt','asc').onSnapshot(snap => { customers=snap.docs.map(d=>({id:d.id,...d.data()})); setOnline(); render(); }, setOffline);
+    db.collection('transactions').orderBy('createdAt','desc').onSnapshot(snap => { transactions=snap.docs.map(d=>({id:d.id,...d.data()})); render(); });
+    db.collection('categories').orderBy('createdAt','asc').onSnapshot(snap => { categories=snap.docs.map(d=>({id:d.id,...d.data()})); renderCatBar(); renderCatSelect(); renderCatManage(); });
 
-    db.collection('transactions').orderBy('date','desc').onSnapshot(snap => {
-      transactions = snap.docs.map(d => ({id:d.id,...d.data()}));
-      render();
-    });
+    function getBalance(cid) { return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='lena'?t.amount:-t.amount),0); }
 
-    function getBalance(cid) {
-      return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='lena'?t.amount:-t.amount),0);
+    function fmtDateTime(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+             d.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',hour12:true});
     }
-    function fmt(d) { return d ? new Date(d).toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'}) : ''; }
 
-    window.render = function() {
+    function renderCatBar() {
+      const bar = document.getElementById('catBar');
+      bar.innerHTML = `<div class="cat-chip ${currentCat==='all'?'active':''}" onclick="setCat('all')">Sab</div>` +
+        categories.map(c=>`<div class="cat-chip ${currentCat===c.id?'active':''}" onclick="setCat('${c.id}')">${c.name}</div>`).join('') +
+        `<div class="cat-chip manage" onclick="openModal('categories')">⚙️ Manage</div>`;
+    }
+
+    function renderCatSelect() {
+      const sel = document.getElementById('newCat');
+      sel.innerHTML = '<option value="">-- Category select karo --</option>' +
+        categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    function renderCatManage() {
+      const el = document.getElementById('catListManage');
+      if (!categories.length) { el.innerHTML = '<div class="empty-tx">Koi category nahi</div>'; return; }
+      el.innerHTML = categories.map(c=>`
+        <div class="cat-list-item">
+          <span class="cat-list-name">${c.name}</span>
+          <button class="cat-del-btn" onclick="delCategory('${c.id}')">×</button>
+        </div>`).join('');
+    }
+
+    window.setCat = function(id) { currentCat=id; renderCatBar(); render(); };
+
+    window.addCategory = function() {
+      const n = document.getElementById('newCatName').value.trim();
+      if (!n) return;
+      db.collection('categories').add({ name: n, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      document.getElementById('newCatName').value = '';
+    };
+
+    window.delCategory = function(id) {
+      if (!confirm('Delete karo?')) return;
+      db.collection('categories').doc(id).delete();
+    };
+
+    function render() {
       const search = document.getElementById('searchBox').value.toLowerCase();
-      let list = customers.filter(c=>c.name.toLowerCase().includes(search));
-      if (currentFilter==='lena') list=list.filter(c=>getBalance(c.id)>0);
-      if (currentFilter==='dena') list=list.filter(c=>getBalance(c.id)<0);
+      let list = customers.filter(c => c.name.toLowerCase().includes(search));
+      if (currentCat !== 'all') list = list.filter(c => c.catId === currentCat);
+      if (currentFilter === 'lena') list = list.filter(c => getBalance(c.id) > 0);
+      if (currentFilter === 'dena') list = list.filter(c => getBalance(c.id) < 0);
 
-      let tL=0,tD=0;
-      customers.forEach(c=>{const b=getBalance(c.id);if(b>0)tL+=b;else tD+=Math.abs(b);});
-      document.getElementById('totalLena').textContent='Rs. '+tL.toLocaleString();
-      document.getElementById('totalDena').textContent='Rs. '+tD.toLocaleString();
+      let tL=0, tD=0;
+      customers.forEach(c => { const b=getBalance(c.id); if(b>0)tL+=b; else tD+=Math.abs(b); });
+      document.getElementById('totalLena').textContent = 'Rs. ' + tL.toLocaleString();
+      document.getElementById('totalDena').textContent = 'Rs. ' + tD.toLocaleString();
 
-      if(!list.length){document.getElementById('customerList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>';return;}
+      if (!list.length) { document.getElementById('customerList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>'; return; }
 
-      document.getElementById('customerList').innerHTML=list.map(c=>{
-        const bal=getBalance(c.id);
-        const bc=bal>0?'lena':bal<0?'dena':'zero';
-        const bl=bal>0?'Maine Lena':bal<0?'Maine Dena':'Barabar';
-        const cTx=transactions.filter(t=>t.custId===c.id);
-        const txHtml=cTx.length?cTx.map(t=>`
-          <div class="tx-item">
-            <div class="tx-dot ${t.type}"></div>
-            <div class="tx-detail"><div class="tx-name">${t.item||'Entry'}</div><div class="tx-date">${fmt(t.date)}</div></div>
-            <div class="tx-amt ${t.type}">${t.type==='lena'?'+':'-'}Rs. ${Number(t.amount).toLocaleString()}</div>
-            <button class="tx-del" onclick="delTx('${t.id}',event)">×</button>
-          </div>`).join(''):'<div class="empty-tx">Koi entry nahi</div>';
+      document.getElementById('customerList').innerHTML = list.map(c => {
+        const bal = getBalance(c.id);
+        const bc = bal>0?'lena':bal<0?'dena':'zero';
+        const bl = bal>0?'Maine Lena':bal<0?'Maine Dena':'Barabar';
+        const cTx = transactions.filter(t => t.custId === c.id);
+        const catName = categories.find(cat => cat.id === c.catId)?.name || '';
+
+        const txHtml = cTx.length
+          ? cTx.map(t => `
+            <div class="tx-item">
+              <div class="tx-dot ${t.type}"></div>
+              <div class="tx-detail">
+                <div class="tx-name">${t.item || 'Entry'}</div>
+                <div class="tx-date">${fmtDateTime(t.createdAt)}</div>
+              </div>
+              <div class="tx-amt ${t.type}">${t.type==='lena'?'+':'-'}Rs. ${Number(t.amount).toLocaleString()}</div>
+              <button class="tx-del" onclick="delTx('${t.id}',event)">×</button>
+            </div>`).join('')
+          : '<div class="empty-tx">Koi entry nahi</div>';
+
         return `<div class="customer-card ${activeId===c.id?'active':''}" id="card-${c.id}">
           <div class="customer-header" onclick="toggleCust('${c.id}')">
             <div class="avatar">${c.name.charAt(0).toUpperCase()}</div>
-            <div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-meta">${c.phone||''} · ${cTx.length} entry</div></div>
-            <div class="cust-bal"><div class="bal-amt ${bc}">Rs. ${Math.abs(bal).toLocaleString()}</div><div class="bal-lbl">${bl}</div></div>
+            <div class="cust-info">
+              <div class="cust-name">${c.name}</div>
+              <div class="cust-meta">${c.phone||''} · ${cTx.length} entry</div>
+              ${catName ? `<span class="cust-cat">${catName}</span>` : ''}
+            </div>
+            <div class="cust-bal">
+              <div class="bal-amt ${bc}">Rs. ${Math.abs(bal).toLocaleString()}</div>
+              <div class="bal-lbl">${bl}</div>
+            </div>
           </div>
           <div class="transactions">
             <div class="tx-hdr"><span class="tx-title">Transactions</span><button class="btn-del-cust" onclick="delCust('${c.id}',event)">🗑 Delete</button></div>
@@ -273,22 +370,67 @@
       }).join('');
     }
 
-    window.toggleCust = id => { activeId=activeId===id?null:id; render(); if(activeId)setTimeout(()=>document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'}),50); };
-    window.addCustomer = () => { const n=document.getElementById('newName').value.trim(); if(!n){alert('Naam likho');return;} db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';closeModal('add-customer');}); };
-    window.delCust = (id,e) => { e.stopPropagation(); if(!confirm('Delete karo?'))return; db.collection('customers').doc(id).delete(); transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete()); if(activeId===id)activeId=null; };
-    window.openTx = (cid,type) => { document.getElementById('txCustId').value=cid; pickType(type); document.getElementById('txDate').value=new Date().toISOString().split('T')[0]; document.getElementById('txAmt').value=''; document.getElementById('txItem').value=''; openModal('add-tx'); };
-    window.pickType = type => { currentType=type; document.getElementById('btnLena').className='type-btn lena'+(type==='lena'?' sel':''); document.getElementById('btnDena').className='type-btn dena'+(type==='dena'?' sel':''); };
-    window.addTx = () => { const a=parseFloat(document.getElementById('txAmt').value); if(!a||a<=0){alert('Amount likho');return;} db.collection('transactions').add({custId:document.getElementById('txCustId').value,type:currentType,amount:a,item:document.getElementById('txItem').value.trim(),date:document.getElementById('txDate').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>closeModal('add-tx')); };
-    window.delTx = (id,e) => { e.stopPropagation(); if(!confirm('Delete karo?'))return; db.collection('transactions').doc(id).delete(); };
-    window.setFilter = (f,btn) => { currentFilter=f; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); };
+    window.toggleCust = id => { activeId=activeId===id?null:id; render(); if(activeId) setTimeout(()=>document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'}),50); };
+
+    window.addCustomer = () => {
+      const n = document.getElementById('newName').value.trim();
+      if (!n) { alert('Naam likho'); return; }
+      db.collection('customers').add({
+        name: n,
+        phone: document.getElementById('newPhone').value.trim(),
+        catId: document.getElementById('newCat').value || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        document.getElementById('newName').value = '';
+        document.getElementById('newPhone').value = '';
+        document.getElementById('newCat').value = '';
+        closeModal('add-customer');
+      });
+    };
+
+    window.delCust = (id, e) => {
+      e.stopPropagation();
+      if (!confirm('Delete karo?')) return;
+      db.collection('customers').doc(id).delete();
+      transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete());
+      if (activeId===id) activeId=null;
+    };
+
+    window.openTx = (cid, type) => {
+      document.getElementById('txCustId').value = cid;
+      pickType(type);
+      document.getElementById('txAmt').value = '';
+      document.getElementById('txItem').value = '';
+      openModal('add-tx');
+    };
+
+    window.pickType = type => {
+      currentType = type;
+      document.getElementById('btnLena').className = 'type-btn lena'+(type==='lena'?' sel':'');
+      document.getElementById('btnDena').className = 'type-btn dena'+(type==='dena'?' sel':'');
+    };
+
+    window.addTx = () => {
+      const a = parseFloat(document.getElementById('txAmt').value);
+      if (!a || a<=0) { alert('Amount likho'); return; }
+      db.collection('transactions').add({
+        custId: document.getElementById('txCustId').value,
+        type: currentType,
+        amount: a,
+        item: document.getElementById('txItem').value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => closeModal('add-tx'));
+    };
+
+    window.delTx = (id, e) => { e.stopPropagation(); if(!confirm('Delete karo?'))return; db.collection('transactions').doc(id).delete(); };
+    window.setFilter = (f, btn) => { currentFilter=f; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); };
   }
 
-  // If already authed, init firebase immediately
-  if (sessionStorage.getItem('auth') === '1') initFirebase();
+  if (sessionStorage.getItem('auth') === '1') initApp();
 
   window.openModal = n => document.getElementById('modal-'+n).classList.add('open');
   window.closeModal = n => document.getElementById('modal-'+n).classList.remove('open');
-  document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+  document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
 </script>
 </body>
 </html>
