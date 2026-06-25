@@ -16,13 +16,18 @@
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
 
   #lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px}
-  .lock-icon{font-size:60px;margin-bottom:16px}
-  .lock-title{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:6px}
-  .lock-sub{font-size:13px;color:var(--muted);margin-bottom:30px}
-  .lock-input{width:100%;max-width:280px;background:var(--surface2);border:2px solid var(--border);color:var(--text);padding:14px;border-radius:10px;font-size:20px;text-align:center;outline:none;letter-spacing:4px;margin-bottom:14px}
-  .lock-input:focus{border-color:var(--accent)}
-  .lock-btn{width:100%;max-width:280px;padding:14px;background:var(--accent);border:none;color:#000;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
-  .lock-error{color:var(--red);font-size:13px;margin-top:10px;display:none}
+  .lock-icon{font-size:55px;margin-bottom:12px}
+  .lock-title{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:4px}
+  .lock-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+  .pin-dots{display:flex;gap:14px;margin-bottom:28px}
+  .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:background 0.15s}
+  .pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+  .pin-btn{padding:18px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:22px;font-weight:600;cursor:pointer;text-align:center;user-select:none}
+  .pin-btn:active{background:var(--accent);color:#000}
+  .pin-btn.del{font-size:18px;color:var(--muted)}
+  .pin-btn.empty{background:transparent;border:none;cursor:default}
+  .lock-error{color:var(--red);font-size:13px;margin-top:14px;display:none}
 
   header{background:var(--surface);border-bottom:2px solid var(--accent);padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
   header h1{font-size:17px;font-weight:700;color:var(--accent)}
@@ -150,9 +155,28 @@
 <div id="lockScreen">
   <div class="lock-icon">🔐</div>
   <div class="lock-title">Udhaar Book</div>
-  <div class="lock-sub">Password enter karo</div>
-  <input class="lock-input" type="number" id="passInput" placeholder="••••" min="0" max="9999" inputmode="numeric" pattern="[0-9]*" oninput="if(this.value.length===4)checkPass()"/>
-  <div class="lock-error" id="passError">❌ Galat password</div>
+  <div class="lock-sub">PIN enter karo</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <div class="pin-btn empty"></div>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="lock-error" id="passError">❌ Galat PIN</div>
 </div>
 
 <div id="mainApp" style="display:none">
@@ -262,17 +286,33 @@
 <script>
 const PASS='1200';
 
-function checkPass(){
-  if(document.getElementById('passInput').value===PASS){
-    sessionStorage.setItem('auth','1');
-    document.getElementById('lockScreen').style.display='none';
-    document.getElementById('mainApp').style.display='block';
-    initApp();
-  } else {
-    document.getElementById('passError').style.display='block';
-    document.getElementById('passInput').value='';
+let pinVal='';
+function pinPress(n){
+  if(pinVal.length>=4)return;
+  pinVal+=n;
+  document.getElementById('d'+(pinVal.length-1)).classList.add('filled');
+  if(pinVal.length===4){
+    setTimeout(()=>{
+      if(pinVal===PASS){
+        sessionStorage.setItem('auth','1');
+        document.getElementById('lockScreen').style.display='none';
+        document.getElementById('mainApp').style.display='block';
+        initApp();
+      } else {
+        document.getElementById('passError').style.display='block';
+        pinVal='';
+        for(let i=0;i<4;i++) document.getElementById('d'+i).classList.remove('filled');
+      }
+    },100);
   }
 }
+function pinDel(){
+  if(!pinVal.length)return;
+  document.getElementById('d'+(pinVal.length-1)).classList.remove('filled');
+  pinVal=pinVal.slice(0,-1);
+  document.getElementById('passError').style.display='none';
+}
+function checkPass(){}
 
 if(sessionStorage.getItem('auth')==='1'){
   document.getElementById('lockScreen').style.display='none';
@@ -353,8 +393,11 @@ function initApp(){
     if(!businesses.length){el.innerHTML='<div class="empty-tx">Koi business nahi</div>';return;}
     el.innerHTML=businesses.map(b=>`
       <div class="biz-list-item">
-        <span>${b.name}</span>
-        <button class="biz-del-btn" onclick="delBusiness('${b.id}')">×</button>
+        <span class="biz-list-name" id="bname-${b.id}">${b.name}</span>
+        <div style="display:flex;gap:6px">
+          <button style="background:none;border:1px solid var(--accent);color:var(--accent);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer" onclick="editBusiness('${b.id}')">✏️</button>
+          <button class="biz-del-btn" onclick="delBusiness('${b.id}')">×</button>
+        </div>
       </div>`).join('');
   }
 
@@ -378,6 +421,13 @@ function initApp(){
   window.setBiz=id=>{currentBiz=id;renderBizBar();render();};
   window.addBusiness=()=>{const n=document.getElementById('newBizName').value.trim();if(!n)return;db.collection('businesses').add({name:n,createdAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('newBizName').value='';};
   window.delBusiness=id=>{if(!confirm('Delete karo?'))return;db.collection('businesses').doc(id).delete();};
+  window.editBusiness=id=>{
+    const biz=businesses.find(b=>b.id===id);
+    if(!biz)return;
+    const newName=prompt('Naya naam:',biz.name);
+    if(!newName||!newName.trim())return;
+    db.collection('businesses').doc(id).update({name:newName.trim()});
+  };
 
   function render(){
     const search=document.getElementById('searchBox').value.toLowerCase();
