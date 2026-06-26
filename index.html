@@ -11,165 +11,157 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>Udhaar Book</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  :root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;--accent:#e8a020;--green:#27ae60;--red:#e74c3c;--text:#f0f0f0;--muted:#888;--card:#1e1e1e}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--s2:#242424;--border:#2e2e2e;--accent:#e8a020;--green:#27ae60;--red:#e74c3c;--text:#f0f0f0;--muted:#888;--card:#1e1e1e}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
 
-  #lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:0;overflow-y:auto}
-  .lock-icon{font-size:44px;margin-bottom:8px}
-  .lock-title{font-size:20px;font-weight:700;color:var(--accent);margin-bottom:4px}
-  .lock-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
-  .pin-dots{display:flex;gap:12px;margin-bottom:16px}
-  .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:background 0.15s}
-  .pin-dot.filled{background:var(--accent);border-color:var(--accent)}
-  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:260px}
-  .pin-btn{padding:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:20px;font-weight:600;cursor:pointer;text-align:center;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-  .pin-btn:active{background:var(--accent);color:#000}
-  .pin-btn.del{font-size:18px;color:var(--muted)}
-  .pin-btn.empty{background:transparent;border:none;cursor:default}
-  .lock-error{color:var(--red);font-size:13px;margin-top:14px;display:none}
+/* LOCK */
+#lockScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.lock-icon{font-size:44px;margin-bottom:8px}
+.lock-title{font-size:20px;font-weight:700;color:var(--accent);margin-bottom:16px}
+.user-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:280px;margin-bottom:16px}
+.user-btn{padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--s2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.user-btn.sel{border-color:var(--accent);color:var(--accent)}
+.pin-label{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center}
+.pin-dots{display:flex;gap:12px;margin-bottom:16px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:background .15s}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:260px}
+.pin-btn{padding:16px;background:var(--s2);border:1px solid var(--border);color:var(--text);border-radius:12px;font-size:20px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.pin-btn:active{background:var(--accent);color:#000}
+.pin-btn.empty{background:transparent;border:none}
+.pin-err{color:var(--red);font-size:12px;margin-top:10px;display:none;text-align:center}
+.fp-btn{margin-top:14px;background:none;border:2px solid var(--accent);color:var(--accent);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:none;touch-action:manipulation}
+.forgot-btn{margin-top:12px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
 
-  header{background:var(--surface);border-bottom:2px solid var(--accent);padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-  header h1{font-size:17px;font-weight:700;color:var(--accent)}
-  .header-right{display:flex;align-items:center;gap:10px}
-  .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px}
-  .sync-dot.offline{background:var(--red)}
-  .undo-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer}
-  .undo-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* HEADER */
+header{background:var(--surface);border-bottom:2px solid var(--accent);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+header h1{font-size:16px;font-weight:700;color:var(--accent)}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:3px}
+.sync-dot.off{background:var(--red)}
+.hdr-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer}
+.user-badge{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer}
 
-  .main{max-width:680px;margin:0 auto;padding:14px;padding-bottom:80px}
+/* MAIN */
+.main{max-width:680px;margin:0 auto;padding:12px;padding-bottom:80px}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sum-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.sum-card .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.sum-card .amt{font-size:18px;font-weight:700}
+.sum-card.mile .amt{color:var(--green)}
+.sum-card.diye .amt{color:var(--red)}
 
-  .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-  .sum-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
-  .sum-card .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-  .sum-card .amt{font-size:20px;font-weight:700}
-  .sum-card.mile .amt{color:var(--green)}
-  .sum-card.diye .amt{color:var(--red)}
+/* BIZ BAR */
+.biz-section{margin-bottom:12px}
+.sab-btn{width:100%;padding:10px;border-radius:10px;border:2px solid var(--border);background:var(--s2);color:var(--muted);font-size:15px;font-weight:700;cursor:pointer;text-align:center;margin-bottom:8px;touch-action:manipulation}
+.sab-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.biz-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.biz-chips::-webkit-scrollbar{display:none}
+.biz-chip{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--s2);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;touch-action:manipulation}
+.biz-chip.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.biz-chip.manage{border-style:dashed;font-weight:400;font-size:12px}
 
-  .biz-bar{margin-bottom:14px}
-  .sab-btn{width:100%;padding:10px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--muted);font-size:16px;font-weight:700;cursor:pointer;text-align:center;margin-bottom:10px}
-  .sab-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
-  .biz-chips-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
-  .biz-chips-row::-webkit-scrollbar{display:none}
-  .biz-chip{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
-  .biz-chip.active{background:var(--accent);color:#000;border-color:var(--accent)}
-  .biz-chip.manage{border-style:dashed;font-weight:400;font-size:12px}
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.tab-btn{padding:7px 12px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;touch-action:manipulation}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 
-  .tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--border)}
-  .tab-btn{padding:7px 14px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
-  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.search-box{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none}
+.search-box:focus{border-color:var(--accent)}
 
-  .search-box{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none}
-  .search-box:focus{border-color:var(--accent)}
+/* CUSTOMER CARD */
+.cust-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.cust-card.active{border-color:var(--accent)}
+.cust-hdr{display:flex;align-items:center;padding:12px 14px;gap:10px;cursor:pointer;user-select:none}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.cust-info{flex:1}
+.cust-name{font-weight:600;font-size:14px}
+.cust-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.cust-biz-tag{display:inline-block;font-size:10px;background:var(--s2);border:1px solid var(--border);color:var(--accent);padding:1px 7px;border-radius:10px;margin-top:3px}
+.cust-bal{text-align:right}
+.bal-amt{font-size:15px;font-weight:700}
+.bal-amt.mile{color:var(--green)}
+.bal-amt.diye{color:var(--red)}
+.bal-amt.zero{color:var(--muted)}
+.bal-lbl{font-size:10px;color:var(--muted)}
 
-  .customer-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
-  .customer-card.active{border-color:var(--accent)}
-  .customer-header{display:flex;align-items:center;padding:12px 14px;gap:10px;cursor:pointer;user-select:none}
-  .avatar{width:38px;height:38px;border-radius:50%;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
-  .cust-info{flex:1}
-  .cust-name{font-weight:600;font-size:14px}
-  .cust-meta{font-size:11px;color:var(--muted);margin-top:2px}
-  .cust-biz{display:inline-block;font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);padding:1px 7px;border-radius:10px;margin-top:3px}
-  .cust-bal{text-align:right}
-  .bal-amt{font-size:15px;font-weight:700}
-  .bal-amt.mile{color:var(--green)}
-  .bal-amt.diye{color:var(--red)}
-  .bal-amt.zero{color:var(--muted)}
-  .bal-lbl{font-size:10px;color:var(--muted)}
+/* TRANSACTIONS */
+.tx-section{padding:0 14px 14px;border-top:1px solid var(--border);display:none}
+.cust-card.active .tx-section{display:block}
+.tx-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 0 6px}
+.tx-title{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.tx-item{display:flex;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);gap:8px}
+.tx-item:last-child{border-bottom:none}
+.tx-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.tx-dot.mile{background:var(--green)}
+.tx-dot.diye{background:var(--red)}
+.tx-detail{flex:1}
+.tx-name{font-size:13px}
+.tx-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.tx-img{margin-top:6px;max-width:100px;border-radius:6px;cursor:pointer;border:1px solid var(--border)}
+.tx-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.tx-amt{font-weight:600;font-size:13px}
+.tx-amt.mile{color:var(--green)}
+.tx-amt.diye{color:var(--red)}
+.tx-actions-row{display:flex;gap:4px}
+.tx-edit-btn{background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;padding:2px}
+.tx-del-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px;line-height:1}
+.add-tx-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.btn-mile{padding:9px;border:none;border-radius:7px;background:var(--green);color:#fff;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.btn-diye{padding:9px;border:none;border-radius:7px;background:var(--red);color:#fff;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.empty-tx{text-align:center;padding:14px;color:var(--muted);font-size:12px}
+.no-cust{text-align:center;padding:50px 20px;color:var(--muted)}
+.del-cust-btn{background:none;border:1px solid var(--red);color:var(--red);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer}
 
-  .transactions{padding:0 14px 14px;border-top:1px solid var(--border);display:none}
-  .customer-card.active .transactions{display:block}
-  .tx-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 0 6px}
-  .tx-title{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase}
-  .tx-item{display:flex;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);gap:8px}
-  .tx-item:last-child{border-bottom:none}
-  .tx-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
-  .tx-dot.mile{background:var(--green)}
-  .tx-dot.diye{background:var(--red)}
-  .tx-detail{flex:1}
-  .tx-name{font-size:13px}
-  .tx-date{font-size:11px;color:var(--muted);margin-top:2px}
-  .tx-receipt{margin-top:6px;max-width:120px;border-radius:6px;cursor:pointer;border:1px solid var(--border)}
-  .tx-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-  .tx-amt{font-weight:600;font-size:13px}
-  .tx-amt.mile{color:var(--green)}
-  .tx-amt.diye{color:var(--red)}
-  .tx-del{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;line-height:1}
+/* FAB */
+.fab{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(232,160,32,.5);display:flex;align-items:center;justify-content:center;z-index:200;touch-action:manipulation}
 
-  .tx-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-  .btn-mile{padding:9px;border:none;border-radius:7px;background:var(--green);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
-  .btn-diye{padding:9px;border:none;border-radius:7px;background:var(--red);color:#fff;font-size:13px;font-weight:600;cursor:pointer}
-  .empty-tx{text-align:center;padding:16px;color:var(--muted);font-size:12px}
-  .no-cust{text-align:center;padding:50px 20px;color:var(--muted)}
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:18px 18px 0 0;padding:20px 16px;padding-bottom:calc(30px + env(safe-area-inset-bottom));width:100%;max-width:680px;animation:slideUp .22s ease;max-height:90vh;overflow-y:auto}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--accent)}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:15px;outline:none;font-family:inherit}
+.fg input:focus,.fg select:focus{border-color:var(--accent)}
+.fg select option{background:var(--s2)}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.type-btn{padding:10px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.type-btn.mile.sel{border-color:var(--green);color:var(--green);background:rgba(39,174,96,.1)}
+.type-btn.diye.sel{border-color:var(--red);color:var(--red);background:rgba(231,76,60,.1)}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.btn-cancel{padding:11px;background:var(--s2);border:1px solid var(--border);color:var(--muted);border-radius:8px;font-size:14px;cursor:pointer}
+.btn-save{padding:11px;background:var(--accent);border:none;color:#000;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+.photo-label{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:var(--s2);border:1px dashed var(--border);border-radius:8px;cursor:pointer;color:var(--muted);font-size:13px}
+.photo-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:8px;display:none}
+.biz-list-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px}
+.biz-list-item:last-child{border-bottom:none}
+.biz-list-item span{flex:1;font-size:14px}
+.loading{text-align:center;padding:40px;color:var(--muted)}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  .fab{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));right:22px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#000;border:none;font-size:28px;cursor:pointer;box-shadow:0 4px 18px rgba(232,160,32,0.5);display:flex;align-items:center;justify-content:center;z-index:200}
-
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:flex-end;justify-content:center}
-  .modal-overlay.open{display:flex}
-  .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:22px 18px;padding-bottom:calc(36px + env(safe-area-inset-bottom));width:100%;max-width:680px;animation:slideUp 0.22s ease;max-height:90vh;overflow-y:auto}
-  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .modal-title{font-size:16px;font-weight:700;margin-bottom:18px;color:var(--accent)}
-  .form-group{margin-bottom:12px}
-  .form-group label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase}
-  .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-size:16px;outline:none;font-family:inherit}
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
-  .form-group select option{background:var(--surface2)}
-  .type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .type-btn{padding:11px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer}
-  .type-btn.mile.sel{border-color:var(--green);color:var(--green);background:rgba(39,174,96,0.1)}
-  .type-btn.diye.sel{border-color:var(--red);color:var(--red);background:rgba(231,76,60,0.1)}
-  .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-  .btn-cancel{padding:12px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;font-size:14px;cursor:pointer}
-  .btn-save{padding:12px;background:var(--accent);border:none;color:#000;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
-  .btn-del-cust{background:none;border:1px solid var(--red);color:var(--red);padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer}
-
-  .photo-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px;display:none}
-  .photo-label{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:var(--surface2);border:1px dashed var(--border);border-radius:8px;cursor:pointer;color:var(--muted);font-size:14px}
-  .photo-label:hover{border-color:var(--accent);color:var(--accent)}
-
-  .biz-list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-  .biz-list-item:last-child{border-bottom:none}
-  .biz-del-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer}
-
-  /* Undo modal */
-  .undo-item{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
-  .undo-item:last-child{border-bottom:none}
-  .undo-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  .undo-dot.mile{background:var(--green)}
-  .undo-dot.diye{background:var(--red)}
-  .undo-info{flex:1}
-  .undo-name{font-size:13px}
-  .undo-meta{font-size:11px;color:var(--muted);margin-top:2px}
-  .undo-del{background:none;border:1px solid var(--red);color:var(--red);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer}
-
-  /* Image viewer */
-  #imgViewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:500;align-items:center;justify-content:center}
-  #imgViewer.open{display:flex}
-  #imgViewer img{max-width:95%;max-height:95%;border-radius:8px}
-  #imgViewer .close-btn{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer}
-
-  .loading{text-align:center;padding:40px;color:var(--muted)}
-  .spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* IMG VIEWER */
+#imgViewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;align-items:center;justify-content:center}
+#imgViewer.open{display:flex}
+#imgViewer img{max-width:95%;max-height:95%;border-radius:8px}
+#imgViewer .close-v{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer}
 </style>
 </head>
 <body>
 
+<!-- LOCK SCREEN -->
 <div id="lockScreen">
   <div class="lock-icon">🔐</div>
   <div class="lock-title">Udhaar Book</div>
-
-  <!-- User Select -->
-  <div id="userSelect" style="width:100%;max-width:280px;margin-bottom:20px">
-    <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Aap kaun hain?</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button onclick="selectUser('king')" id="btnKing" style="padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent">👑 King</button>
-      <button onclick="selectUser('farman')" id="btnFarman" style="padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent">🤝 Farman</button>
-    </div>
+  <div class="user-btns">
+    <button class="user-btn" id="btnKing" onclick="selectUser('king')">👑 King</button>
+    <button class="user-btn" id="btnFarman" onclick="selectUser('farman')">🤝 Farman</button>
   </div>
-
-  <div class="lock-sub" id="pinLabel" style="margin-bottom:16px">PIN enter karo</div>
-  <button id="fingerprintBtn" onclick="fingerprintLogin()" style="display:none;margin-bottom:16px;background:none;border:2px solid var(--accent);color:var(--accent);padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">👆 Fingerprint se kholo</button>
+  <div class="pin-label" id="pinLabel">Pehle naam select karo</div>
   <div class="pin-dots">
     <div class="pin-dot" id="d0"></div>
     <div class="pin-dot" id="d1"></div>
@@ -188,137 +180,93 @@
     <button class="pin-btn" onclick="pinPress('9')">9</button>
     <div class="pin-btn empty"></div>
     <button class="pin-btn" onclick="pinPress('0')">0</button>
-    <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    <button class="pin-btn" onclick="pinDel()">⌫</button>
   </div>
-  <div class="lock-error" id="passError">❌ Galat PIN</div>
-  <button onclick="showChangePass()" style="margin-top:18px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline">Password bhool gaye?</button>
+  <div class="pin-err" id="pinErr"></div>
+  <button class="fp-btn" id="fpBtn" onclick="fingerprintLogin()">👆 Fingerprint se kholo</button>
+  <button class="forgot-btn" onclick="openModal('change-pass')">Password bhool gaye?</button>
 </div>
 
-<!-- Change Password Modal -->
-<div class="modal-overlay" id="modal-change-pass">
-  <div class="modal">
-    <div class="modal-title">🔑 Password Change Karo</div>
-    <div class="form-group">
-      <label>Apna ID Card Number</label>
-      <input type="number" id="idCardInput" placeholder="ID card number..." inputmode="numeric"/>
-    </div>
-    <div id="newPassSection" style="display:none">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Kis ka password change karna hai?</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-        <button onclick="selectChangeUser('king')" id="chgBtnKing" style="padding:10px;border-radius:8px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer">👑 King</button>
-        <button onclick="selectChangeUser('farman')" id="chgBtnFarman" style="padding:10px;border-radius:8px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer">🤝 Farman</button>
-      </div>
-      <div class="form-group"><label>Naya PIN (4 digits)</label><input type="number" id="newPinInput" placeholder="Naya PIN..." inputmode="numeric" maxlength="4"/></div>
-      <div class="form-group"><label>Dobara likho</label><input type="number" id="newPinConfirm" placeholder="PIN confirm karo..." inputmode="numeric" maxlength="4"/></div>
-      <div id="changePinError" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
-      <button onclick="doChangePass()" class="btn-save" style="width:100%;padding:12px">Change Karo</button>
-    </div>
-    <div id="idVerifyError" style="color:var(--red);font-size:12px;margin-top:8px;display:none">❌ Galat ID card number</div>
-    <button onclick="verifyId()" id="verifyBtn" class="btn-save" style="width:100%;padding:12px;margin-top:12px">Verify Karo</button>
-    <div class="modal-actions" style="grid-template-columns:1fr;margin-top:10px">
-      <button class="btn-cancel" onclick="closeModal('change-pass')">Cancel</button>
-    </div>
-  </div>
-</div>
-
+<!-- MAIN APP -->
 <div id="mainApp" style="display:none">
   <header>
     <h1>📒 Udhaar Book</h1>
-    <div class="header-right">
-      <span id="userNameBadge" style="font-size:12px;color:var(--accent);font-weight:600;cursor:pointer" onclick="openModal('settings')"></span>
-      <button class="undo-btn" onclick="openModal('undo')">↩ Undo</button>
-      <div><span class="sync-dot" id="syncDot"></span><span id="syncStatus" style="font-size:11px;color:var(--muted)">...</span></div>
+    <div class="hdr-right">
+      <span class="user-badge" id="userBadge" onclick="openModal('settings')"></span>
+      <button class="hdr-btn" onclick="openModal('undo')">↩ Undo</button>
+      <div><span class="sync-dot" id="syncDot"></span><span id="syncTxt" style="font-size:10px;color:var(--muted)">...</span></div>
     </div>
   </header>
-
   <div class="main">
     <div class="summary">
-      <div class="sum-card mile"><div class="lbl">Aap Ko Mile</div><div class="amt" id="totalMile">Rs. 0</div></div>
-      <div class="sum-card diye"><div class="lbl">Aap Ne Diye</div><div class="amt" id="totalDiye">Rs. 0</div></div>
+      <div class="sum-card mile"><div class="lbl">Aap Ko Mile</div><div class="amt" id="totMile">Rs. 0</div></div>
+      <div class="sum-card diye"><div class="lbl">Aap Ne Diye</div><div class="amt" id="totDiye">Rs. 0</div></div>
     </div>
-
-    <div class="biz-bar" id="bizBar"></div>
-
+    <div class="biz-section">
+      <button class="sab-btn active" id="sabBtn" onclick="setBiz('all')">Sab Businesses</button>
+      <div class="biz-chips" id="bizChips"></div>
+    </div>
     <div class="tabs">
       <button class="tab-btn active" onclick="setFilter('all',this)">Sab</button>
       <button class="tab-btn" onclick="setFilter('mile',this)">Aap Ko Mile</button>
       <button class="tab-btn" onclick="setFilter('diye',this)">Aap Ne Diye</button>
     </div>
-    <input class="search-box" type="text" placeholder="🔍 Customer dhundo..." oninput="render()" id="searchBox"/>
-    <div id="customerList"><div class="loading"><div class="spinner"></div>Load ho raha hai...</div></div>
+    <input class="search-box" type="text" id="searchBox" placeholder="🔍 Customer dhundo..." oninput="render()"/>
+    <div id="custList"><div class="loading"><div class="spinner"></div>Load ho raha hai...</div></div>
   </div>
-
-  <button class="fab" onclick="openAddCustomer()">+</button>
+  <button class="fab" onclick="openAddCust()">+</button>
 </div>
 
-<!-- Add Customer -->
-<div class="modal-overlay" id="modal-add-customer">
+<!-- ADD CUSTOMER -->
+<div class="modal-overlay" id="modal-add-cust">
   <div class="modal">
     <div class="modal-title">➕ Naya Customer</div>
-    <div class="form-group"><label>Naam</label><input type="text" id="newName" placeholder="Customer ka naam..."/></div>
-    <div class="form-group"><label>Phone (Optional)</label><input type="tel" id="newPhone" placeholder="03XX-XXXXXXX"/></div>
-    <div class="form-group"><label>Business (Optional)</label><div id="bizCheckList" style="display:flex;flex-direction:column;gap:8px;padding:4px 0"></div></div>
+    <div class="fg"><label>Naam</label><input type="text" id="cName" placeholder="Customer ka naam..."/></div>
+    <div class="fg"><label>Phone (Optional)</label><input type="tel" id="cPhone" placeholder="03XX-XXXXXXX"/></div>
+    <div class="fg"><label>Business (Optional)</label><div id="bizChecks" style="display:flex;flex-direction:column;gap:8px"></div></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal('add-customer')">Cancel</button>
-      <button class="btn-save" onclick="addCustomer()">Save</button>
+      <button class="btn-cancel" onclick="closeModal('add-cust')">Cancel</button>
+      <button class="btn-save" id="saveCustBtn" onclick="addCust()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Add Transaction -->
+<!-- ADD TRANSACTION -->
 <div class="modal-overlay" id="modal-add-tx">
   <div class="modal">
     <div class="modal-title">💰 Entry Karo</div>
     <input type="hidden" id="txCustId"/>
-    <div class="form-group">
+    <div class="fg">
       <label>Qism</label>
       <div class="type-toggle">
         <button class="type-btn mile sel" id="btnMile" onclick="pickType('mile')">Aap Ko Mile</button>
         <button class="type-btn diye" id="btnDiye" onclick="pickType('diye')">Aap Ne Diye</button>
       </div>
     </div>
-    <div class="form-group"><label>Amount (Rs.)</label><input type="number" id="txAmt" placeholder="0" inputmode="numeric"/></div>
-    <div class="form-group"><label>Item / Wajah</label><input type="text" id="txItem" placeholder="Milk, Coke, Kapra..."/></div>
-    <div class="form-group">
-      <label>Business</label>
-      <select id="txBiz"><option value="">-- Select karo --</option></select>
-    </div>
-    <div class="form-group">
-      <label>Raseed Ki Photo (Optional)</label>
+    <div class="fg"><label>Amount (Rs.)</label><input type="number" id="txAmt" placeholder="0" inputmode="numeric"/></div>
+    <div class="fg"><label>Item / Wajah</label><input type="text" id="txItem" placeholder="Milk, Coke, Kapra..."/></div>
+    <div class="fg"><label>Business</label><select id="txBiz"><option value="">-- Select karo --</option></select></div>
+    <div class="fg">
+      <label>Raseed Photo (Optional)</label>
       <label class="photo-label" for="txPhoto">📷 Camera se photo lo</label>
       <input type="file" id="txPhoto" accept="image/*" capture="environment" style="display:none" onchange="previewPhoto(this)"/>
       <img id="photoPreview" class="photo-preview"/>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('add-tx');clearPhoto()">Cancel</button>
-      <button class="btn-save" onclick="addTx()">Save</button>
+      <button class="btn-save" id="saveTxBtn" onclick="addTx()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Manage Businesses -->
-<div class="modal-overlay" id="modal-businesses">
-  <div class="modal">
-    <div class="modal-title">🏢 Businesses</div>
-    <div class="form-group" style="display:flex;gap:8px">
-      <input type="text" id="newBizName" placeholder="Business ka naam..." style="flex:1"/>
-      <button class="btn-save" style="width:auto;padding:11px 16px" onclick="addBusiness()">Add</button>
-    </div>
-    <div id="bizListManage"></div>
-    <div class="modal-actions" style="grid-template-columns:1fr">
-      <button class="btn-cancel" onclick="closeModal('businesses')">Done</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Transaction Modal -->
+<!-- EDIT TRANSACTION -->
 <div class="modal-overlay" id="modal-edit-tx">
   <div class="modal">
     <div class="modal-title">✏️ Transaction Edit Karo</div>
     <input type="hidden" id="editTxId"/>
-    <div class="form-group"><label>Amount (Rs.)</label><input type="number" id="editTxAmt" placeholder="0" inputmode="numeric"/></div>
-    <div class="form-group"><label>Item / Wajah</label><input type="text" id="editTxItem" placeholder="Milk, Coke, Kapra..."/></div>
-    <div class="form-group"><label>Date & Time</label><input type="datetime-local" id="editTxDateTime"/></div>
+    <div class="fg"><label>Amount (Rs.)</label><input type="number" id="editAmt" inputmode="numeric"/></div>
+    <div class="fg"><label>Item / Wajah</label><input type="text" id="editItem"/></div>
+    <div class="fg"><label>Date & Time</label><input type="datetime-local" id="editDT"/></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal('edit-tx')">Cancel</button>
       <button class="btn-save" onclick="saveEditTx()">Save</button>
@@ -326,218 +274,123 @@
   </div>
 </div>
 
-<!-- Settings Modal -->
-<div class="modal-overlay" id="modal-settings">
+<!-- MANAGE BUSINESSES -->
+<div class="modal-overlay" id="modal-biz">
   <div class="modal">
-    <div class="modal-title">⚙️ Settings</div>
-    <div class="form-group">
-      <label>Default Business (Login pe auto-select)</label>
-      <select id="defaultBizSelect" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-size:16px;outline:none">
-        <option value="">-- Koi nahi (Sab) --</option>
-      </select>
+    <div class="modal-title">🏢 Businesses</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input type="text" id="newBizName" placeholder="Naya business..." style="flex:1;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;font-size:14px;outline:none"/>
+      <button class="btn-save" style="width:auto;padding:10px 14px" onclick="addBiz()">Add</button>
     </div>
-    <div class="modal-actions" style="grid-template-columns:1fr 1fr">
-      <button class="btn-cancel" onclick="closeModal('settings')">Cancel</button>
-      <button class="btn-save" onclick="saveDefaultBiz()">Save</button>
+    <div id="bizManageList"></div>
+    <div class="modal-actions" style="grid-template-columns:1fr">
+      <button class="btn-cancel" onclick="closeModal('biz')">Done</button>
     </div>
-    <button onclick="resetFingerprint()" style="width:100%;margin-top:10px;padding:12px;background:none;border:1px solid var(--muted);color:var(--muted);border-radius:8px;font-size:14px;cursor:pointer">👆 Fingerprint Reset Karo</button>
-    <button onclick="logout()" style="width:100%;margin-top:10px;padding:12px;background:none;border:1px solid var(--red);color:var(--red);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">🚪 Logout</button>
   </div>
 </div>
 
-<!-- Undo Modal -->
+<!-- UNDO -->
 <div class="modal-overlay" id="modal-undo">
   <div class="modal">
     <div class="modal-title">↩ Last 10 Transactions</div>
     <div id="undoList"></div>
-    <div class="modal-actions" style="grid-template-columns:1fr;margin-top:12px">
+    <div class="modal-actions" style="grid-template-columns:1fr;margin-top:10px">
       <button class="btn-cancel" onclick="closeModal('undo')">Band Karo</button>
     </div>
   </div>
 </div>
 
-<!-- Image Viewer -->
+<!-- SETTINGS -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-title">⚙️ Settings</div>
+    <div class="fg">
+      <label>Default Business (Login pe auto-select)</label>
+      <select id="defBizSel"><option value="">-- Koi nahi (Sab) --</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('settings')">Cancel</button>
+      <button class="btn-save" onclick="saveDefBiz()">Save</button>
+    </div>
+    <button onclick="resetFp()" style="width:100%;margin-top:10px;padding:11px;background:none;border:1px solid var(--muted);color:var(--muted);border-radius:8px;font-size:13px;cursor:pointer">👆 Fingerprint Reset</button>
+    <button onclick="doLogout()" style="width:100%;margin-top:8px;padding:11px;background:none;border:1px solid var(--red);color:var(--red);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD -->
+<div class="modal-overlay" id="modal-change-pass">
+  <div class="modal">
+    <div class="modal-title">🔑 Password Change Karo</div>
+    <div class="fg"><label>ID Card Number</label><input type="number" id="idCardIn" placeholder="Apna ID card number..." inputmode="numeric"/></div>
+    <div id="verifyErr" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none">❌ Galat ID card number</div>
+    <button onclick="verifyId()" id="verifyBtn" class="btn-save" style="width:100%;padding:11px;margin-bottom:12px">Verify Karo</button>
+    <div id="changeSection" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Kis ka password?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="selChgUser('king')" id="chgKing" style="padding:10px;border-radius:8px;border:2px solid var(--border);background:var(--s2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer">👑 King</button>
+        <button onclick="selChgUser('farman')" id="chgFarman" style="padding:10px;border-radius:8px;border:2px solid var(--border);background:var(--s2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer">🤝 Farman</button>
+      </div>
+      <div class="fg"><label>Naya PIN (4 digits)</label><input type="number" id="newPin1" inputmode="numeric" placeholder="Naya PIN..."/></div>
+      <div class="fg"><label>Confirm PIN</label><input type="number" id="newPin2" inputmode="numeric" placeholder="Dobara likho..."/></div>
+      <div id="chgPinErr" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none"></div>
+      <button onclick="doChangePin()" class="btn-save" style="width:100%;padding:11px">Change Karo</button>
+    </div>
+    <div class="modal-actions" style="grid-template-columns:1fr;margin-top:10px">
+      <button class="btn-cancel" onclick="closeModal('change-pass')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMG VIEWER -->
 <div id="imgViewer">
-  <button class="close-btn" onclick="closeImg()">×</button>
-  <img id="viewerImg" src=""/>
+  <button class="close-v" onclick="document.getElementById('imgViewer').classList.remove('open')">×</button>
+  <img id="viewImg" src=""/>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-// ---- USER CONFIG ----
+// ===================== USERS =====================
 const USERS={
   king:{name:'King',emoji:'👑',pinKey:'pin_king',defaultPin:'1200'},
   farman:{name:'Farman',emoji:'🤝',pinKey:'pin_farman',defaultPin:'1200'}
 };
 const ID_CARD='3320243342401';
-let currentUser=null;
-let changeUser=null;
+let curUser=null;
+let chgUser=null;
 
 function getPin(u){return localStorage.getItem(USERS[u].pinKey)||USERS[u].defaultPin;}
 function setPin(u,p){localStorage.setItem(USERS[u].pinKey,p);}
 
+// ===================== SELECT USER =====================
 function selectUser(u){
-  currentUser=u;
-  document.getElementById('btnKing').style.borderColor=u==='king'?'var(--accent)':'var(--border)';
-  document.getElementById('btnKing').style.color=u==='king'?'var(--accent)':'var(--text)';
-  document.getElementById('btnFarman').style.borderColor=u==='farman'?'var(--accent)':'var(--border)';
-  document.getElementById('btnFarman').style.color=u==='farman'?'var(--accent)':'var(--text)';
+  curUser=u;
+  document.getElementById('btnKing').classList.toggle('sel',u==='king');
+  document.getElementById('btnFarman').classList.toggle('sel',u==='farman');
   document.getElementById('pinLabel').textContent=USERS[u].emoji+' '+USERS[u].name+' ka PIN';
   pinVal='';
   for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled');
-  document.getElementById('passError').style.display='none';
+  document.getElementById('pinErr').style.display='none';
   // Show fingerprint if registered
-  const credId=localStorage.getItem('fp_cred_'+u);
-  const fpBtn=document.getElementById('fingerprintBtn');
-  if(credId&&fpBtn) fpBtn.style.display='block';
+  const cred=localStorage.getItem('fp_'+u);
+  document.getElementById('fpBtn').style.display=cred?'block':'none';
 }
 
-// ---- FINGERPRINT ----
-async function fingerprintLogin(){
-  if(!currentUser){
-    document.getElementById('passError').textContent='Pehle naam select karo';
-    document.getElementById('passError').style.display='block';
-    return;
-  }
-  try{
-    const credId=localStorage.getItem('fp_cred_'+currentUser);
-    if(!credId){
-      await registerFingerprint();
-      return;
-    }
-    const credIdArr=JSON.parse(credId);
-    const assertion=await navigator.credentials.get({
-      publicKey:{
-        challenge:new Uint8Array(32),
-        allowCredentials:[{type:'public-key',id:new Uint8Array(credIdArr)}],
-        timeout:60000,
-        userVerification:'required'
-      }
-    });
-    if(assertion){
-      sessionStorage.setItem('auth',currentUser);
-      document.getElementById('lockScreen').style.display='none';
-      document.getElementById('mainApp').style.display='block';
-      document.getElementById('userNameBadge').textContent=USERS[currentUser].emoji+' '+USERS[currentUser].name;
-      const defBiz=localStorage.getItem('defaultBiz_'+currentUser);
-      if(defBiz) sessionStorage.setItem('startBiz',defBiz);
-      initApp();
-    }
-  }catch(e){
-    if(e.name==='NotAllowedError'){
-      document.getElementById('passError').textContent='Fingerprint cancel kiya';
-    } else {
-      document.getElementById('passError').textContent='Fingerprint kaam nahi kiya — PIN use karo';
-    }
-    document.getElementById('passError').style.display='block';
-  }
-}
-
-async function registerFingerprint(){
-  try{
-    const cred=await navigator.credentials.create({
-      publicKey:{
-        challenge:new Uint8Array(32),
-        rp:{name:'Udhaar Book'},
-        user:{
-          id:new TextEncoder().encode(currentUser),
-          name:USERS[currentUser].name,
-          displayName:USERS[currentUser].name
-        },
-        pubKeyCredParams:[{alg:-7,type:'public-key'}],
-        authenticatorSelection:{userVerification:'required',authenticatorAttachment:'platform'},
-        timeout:60000
-      }
-    });
-    const idArr=Array.from(new Uint8Array(cred.rawId));
-    localStorage.setItem('fp_cred_'+currentUser,JSON.stringify(idArr));
-    alert('Fingerprint register ho gaya! Ab se fingerprint se login kar sakte ho.');
-    fingerprintLogin();
-  }catch(e){
-    alert('Fingerprint register nahi hua — PIN use karo');
-  }
-}
-
-function checkFingerprintSupport(){
-  if(window.PublicKeyCredential){
-    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(available=>{
-      if(available){
-        document.getElementById('fingerprintBtn').style.display='block';
-      }
-    });
-  }
-}
-checkFingerprintSupport();
-
-function showChangePass(){
-  document.getElementById('idCardInput').value='';
-  document.getElementById('newPassSection').style.display='none';
-  document.getElementById('idVerifyError').style.display='none';
-  document.getElementById('verifyBtn').style.display='block';
-  document.getElementById('changePinError').style.display='none';
-  changeUser=null;
-  document.getElementById('chgBtnKing').style.borderColor='var(--border)';
-  document.getElementById('chgBtnFarman').style.borderColor='var(--border)';
-  openModal('change-pass');
-}
-
-function selectChangeUser(u){
-  changeUser=u;
-  document.getElementById('chgBtnKing').style.borderColor=u==='king'?'var(--accent)':'var(--border)';
-  document.getElementById('chgBtnFarman').style.borderColor=u==='farman'?'var(--accent)':'var(--border)';
-}
-
-function verifyId(){
-  const val=document.getElementById('idCardInput').value.trim();
-  if(val===ID_CARD){
-    document.getElementById('idVerifyError').style.display='none';
-    document.getElementById('newPassSection').style.display='block';
-    document.getElementById('verifyBtn').style.display='none';
-  } else {
-    document.getElementById('idVerifyError').style.display='block';
-  }
-}
-
-function doChangePass(){
-  if(!changeUser){alert('Pehle user select karo');return;}
-  const p1=document.getElementById('newPinInput').value.trim();
-  const p2=document.getElementById('newPinConfirm').value.trim();
-  const err=document.getElementById('changePinError');
-  if(p1.length<4){err.textContent='PIN 4 digits ka hona chahiye';err.style.display='block';return;}
-  if(p1!==p2){err.textContent='PIN match nahi kiya';err.style.display='block';return;}
-  setPin(changeUser,p1);
-  err.style.display='none';
-  closeModal('change-pass');
-  alert(USERS[changeUser].name+' ka PIN change ho gaya!');
-}
-
-// ---- PIN PAD ----
+// ===================== PIN =====================
 let pinVal='';
 function pinPress(n){
-  if(!currentUser){
-    document.getElementById('passError').textContent='Pehle naam select karo';
-    document.getElementById('passError').style.display='block';
-    return;
-  }
+  if(!curUser){showPinErr('Pehle naam select karo');return;}
   if(pinVal.length>=4)return;
   pinVal+=n;
   document.getElementById('d'+(pinVal.length-1)).classList.add('filled');
   if(pinVal.length===4){
     setTimeout(()=>{
-      if(pinVal===getPin(currentUser)){
-        sessionStorage.setItem('auth',currentUser);
-        document.getElementById('lockScreen').style.display='none';
-        document.getElementById('mainApp').style.display='block';
-        document.getElementById('userNameBadge').textContent=USERS[currentUser].emoji+' '+USERS[currentUser].name;
-        // Load default business for this user
-        const defBiz=localStorage.getItem('defaultBiz_'+currentUser);
-        if(defBiz) sessionStorage.setItem('startBiz',defBiz);
-        initApp();
+      if(pinVal===getPin(curUser)){
+        doLogin(curUser);
       } else {
-        document.getElementById('passError').style.display='block';
+        showPinErr('❌ Galat PIN');
         pinVal='';
-        for(let i=0;i<4;i++) document.getElementById('d'+i).classList.remove('filled');
+        for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled');
       }
     },100);
   }
@@ -546,366 +399,432 @@ function pinDel(){
   if(!pinVal.length)return;
   document.getElementById('d'+(pinVal.length-1)).classList.remove('filled');
   pinVal=pinVal.slice(0,-1);
-  document.getElementById('passError').style.display='none';
+  document.getElementById('pinErr').style.display='none';
+}
+function showPinErr(msg){
+  const el=document.getElementById('pinErr');
+  el.textContent=msg;
+  el.style.display='block';
 }
 
-const _savedAuth=sessionStorage.getItem('auth');
-if(_savedAuth&&USERS[_savedAuth]){
-  currentUser=_savedAuth;
+// ===================== LOGIN =====================
+function doLogin(u){
+  sessionStorage.setItem('auth',u);
   document.getElementById('lockScreen').style.display='none';
   document.getElementById('mainApp').style.display='block';
-  document.getElementById('userNameBadge').textContent=USERS[_savedAuth].emoji+' '+USERS[_savedAuth].name;
-  const _defBiz=localStorage.getItem('defaultBiz_'+_savedAuth);
-  if(_defBiz) sessionStorage.setItem('startBiz',_defBiz);
+  document.getElementById('userBadge').textContent=USERS[u].emoji+' '+USERS[u].name;
+  const defBiz=localStorage.getItem('defBiz_'+u);
+  if(defBiz) sessionStorage.setItem('startBiz',defBiz);
+  if(!window._appInited){window._appInited=true;initApp();}
 }
 
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+// Check existing session
+(function(){
+  const u=sessionStorage.getItem('auth');
+  if(u&&USERS[u]){
+    curUser=u;
+    document.getElementById('lockScreen').style.display='none';
+    document.getElementById('mainApp').style.display='block';
+    document.getElementById('userBadge').textContent=USERS[u].emoji+' '+USERS[u].name;
+    const defBiz=localStorage.getItem('defBiz_'+u);
+    if(defBiz) sessionStorage.setItem('startBiz',defBiz);
+    window._appInited=true;
+    initApp();
+  }
+})();
 
-window.openModal=n=>document.getElementById('modal-'+n).classList.add('open');
-window.closeModal=n=>document.getElementById('modal-'+n).classList.remove('open');
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+// ===================== FINGERPRINT =====================
+async function fingerprintLogin(){
+  if(!curUser){showPinErr('Pehle naam select karo');return;}
+  try{
+    const credId=localStorage.getItem('fp_'+curUser);
+    if(!credId){await registerFp();return;}
+    const arr=JSON.parse(credId);
+    const res=await navigator.credentials.get({publicKey:{challenge:new Uint8Array(32),allowCredentials:[{type:'public-key',id:new Uint8Array(arr)}],timeout:60000,userVerification:'required'}});
+    if(res)doLogin(curUser);
+  }catch(e){showPinErr('Fingerprint kaam nahi kiya');}
+}
+async function registerFp(){
+  try{
+    const cred=await navigator.credentials.create({publicKey:{challenge:new Uint8Array(32),rp:{name:'Udhaar Book'},user:{id:new TextEncoder().encode(curUser),name:USERS[curUser].name,displayName:USERS[curUser].name},pubKeyCredParams:[{alg:-7,type:'public-key'}],authenticatorSelection:{userVerification:'required',authenticatorAttachment:'platform'},timeout:60000}});
+    localStorage.setItem('fp_'+curUser,JSON.stringify(Array.from(new Uint8Array(cred.rawId))));
+    alert('Fingerprint register ho gaya!');
+    document.getElementById('fpBtn').style.display='block';
+    doLogin(curUser);
+  }catch(e){alert('Fingerprint register nahi hua');}
+}
+(function(){if(window.PublicKeyCredential)PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(ok=>{if(ok)document.getElementById('fpBtn').style.display='none';});})();
 
-window.closeImg=()=>document.getElementById('imgViewer').classList.remove('open');
-window.viewImg=src=>{document.getElementById('viewerImg').src=src;document.getElementById('imgViewer').classList.add('open');}
+// ===================== CHANGE PASSWORD =====================
+function verifyId(){
+  const v=document.getElementById('idCardIn').value.trim();
+  if(v===ID_CARD){
+    document.getElementById('verifyErr').style.display='none';
+    document.getElementById('changeSection').style.display='block';
+    document.getElementById('verifyBtn').style.display='none';
+  } else {
+    document.getElementById('verifyErr').style.display='block';
+  }
+}
+function selChgUser(u){
+  chgUser=u;
+  document.getElementById('chgKing').style.borderColor=u==='king'?'var(--accent)':'var(--border)';
+  document.getElementById('chgFarman').style.borderColor=u==='farman'?'var(--accent)':'var(--border)';
+}
+function doChangePin(){
+  if(!chgUser){alert('Pehle user select karo');return;}
+  const p1=document.getElementById('newPin1').value.trim();
+  const p2=document.getElementById('newPin2').value.trim();
+  const err=document.getElementById('chgPinErr');
+  if(p1.length<4){err.textContent='PIN 4 digits ka hona chahiye';err.style.display='block';return;}
+  if(p1!==p2){err.textContent='PIN match nahi kiya';err.style.display='block';return;}
+  setPin(chgUser,p1);
+  err.style.display='none';
+  closeModal('change-pass');
+  alert(USERS[chgUser].name+' ka PIN change ho gaya!');
+}
 
-let photoBase64='';
-window.previewPhoto=function(input){
-  const file=input.files[0];
-  if(!file)return;
-  // Compress image
+// ===================== SETTINGS =====================
+function saveDefBiz(){
+  const u=sessionStorage.getItem('auth');
+  if(u)localStorage.setItem('defBiz_'+u,document.getElementById('defBizSel').value);
+  closeModal('settings');
+  alert('Saved!');
+}
+function resetFp(){
+  const u=sessionStorage.getItem('auth');
+  if(u)localStorage.removeItem('fp_'+u);
+  alert('Fingerprint reset ho gaya');
+  closeModal('settings');
+}
+function doLogout(){
+  if(!confirm('Logout karo?'))return;
+  sessionStorage.removeItem('auth');
+  location.reload();
+}
+
+// ===================== MODAL =====================
+function openModal(n){
+  if(n==='settings'){
+    const u=sessionStorage.getItem('auth')||'';
+    const saved=localStorage.getItem('defBiz_'+u)||'';
+    const sel=document.getElementById('defBizSel');
+    sel.innerHTML='<option value="">-- Koi nahi (Sab) --</option>'+
+      (window._businesses||[]).map(b=>`<option value="${b.id}"${b.id===saved?' selected':''}>${b.name}</option>`).join('');
+  }
+  if(n==='change-pass'){
+    document.getElementById('idCardIn').value='';
+    document.getElementById('changeSection').style.display='none';
+    document.getElementById('verifyErr').style.display='none';
+    document.getElementById('verifyBtn').style.display='block';
+    document.getElementById('chgPinErr').style.display='none';
+    chgUser=null;
+    document.getElementById('chgKing').style.borderColor='var(--border)';
+    document.getElementById('chgFarman').style.borderColor='var(--border)';
+  }
+  document.getElementById('modal-'+n).classList.add('open');
+}
+function closeModal(n){document.getElementById('modal-'+n).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ===================== PHOTO =====================
+let photoB64='';
+function previewPhoto(inp){
+  const file=inp.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     const img=new Image();
     img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      const MAX=800;
-      let w=img.width,h=img.height;
-      if(w>h){if(w>MAX){h=h*(MAX/w);w=MAX;}}else{if(h>MAX){w=w*(MAX/h);h=MAX;}}
-      canvas.width=w;canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      photoBase64=canvas.toDataURL('image/jpeg',0.7);
-      const prev=document.getElementById('photoPreview');
-      prev.src=photoBase64;prev.style.display='block';
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-};
-window.clearPhoto=()=>{photoBase64='';document.getElementById('photoPreview').style.display='none';document.getElementById('txPhoto').value='';};
+      const c=document.createElement('canvas');
+      const MAX=800;let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=h*MAX/w;w=MAX;}}else{if(h>MAX){w=w*MAX/h;h=MAX;}}
+      c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      photoB64=c.toDataURL('image/jpeg',.7);
+      const p=document.getElementById('photoPreview');p.src=photoB64;p.style.display='block';
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function clearPhoto(){photoB64='';document.getElementById('photoPreview').style.display='none';document.getElementById('txPhoto').value='';}
 
+// ===================== FIREBASE APP =====================
 function initApp(){
   const fc={apiKey:"AIzaSyDr_nh2KkVJtZ2Pw2jXK5ys_gxdRn6WD8o",authDomain:"udhaar-app-da4dc.firebaseapp.com",projectId:"udhaar-app-da4dc",storageBucket:"udhaar-app-da4dc.firebasestorage.app",messagingSenderId:"471472265354",appId:"1:471472265354:web:2a3c2cf0b459c141493573"};
   if(!firebase.apps.length)firebase.initializeApp(fc);
   const db=firebase.firestore();
 
   let customers=[],transactions=[],businesses=[];
-  let activeId=null,currentType='mile',currentFilter='all',currentBiz='all';
+  window._businesses=businesses;
+  let activeId=null,curType='mile',curFilter='all',curBiz='all';
 
-  function setOnline(){document.getElementById('syncDot').className='sync-dot';document.getElementById('syncStatus').textContent='Online';}
-  function setOffline(){document.getElementById('syncDot').className='sync-dot offline';document.getElementById('syncStatus').textContent='Offline';}
+  function online(){document.getElementById('syncDot').className='sync-dot';document.getElementById('syncTxt').textContent='Online';}
+  function offline(){document.getElementById('syncDot').className='sync-dot off';document.getElementById('syncTxt').textContent='Offline';}
 
-  db.collection('customers').orderBy('createdAt','asc').onSnapshot(s=>{customers=s.docs.map(d=>({id:d.id,...d.data()}));setOnline();render();},setOffline);
-  db.collection('transactions').orderBy('createdAt','desc').onSnapshot(s=>{transactions=s.docs.map(d=>({id:d.id,...d.data()}));render();renderUndoList();});
+  // LISTEN
+  db.collection('customers').orderBy('createdAt','asc').onSnapshot(s=>{
+    customers=s.docs.map(d=>({id:d.id,...d.data()}));
+    online();render();
+  },offline);
+
+  db.collection('transactions').orderBy('createdAt','desc').onSnapshot(s=>{
+    transactions=s.docs.map(d=>({id:d.id,...d.data()}));
+    render();renderUndo();
+  });
+
   db.collection('businesses').orderBy('order','asc').onSnapshot(s=>{
     businesses=s.docs.map(d=>({id:d.id,...d.data()}));
-    // Apply default biz on first load
-    const startBiz=sessionStorage.getItem('startBiz');
-    if(startBiz&&businesses.find(b=>b.id===startBiz)){
-      currentBiz=startBiz;
-      sessionStorage.removeItem('startBiz');
-    }
-    renderBizBar();renderBizSelect();renderBizManage();render();
-  },()=>{db.collection('businesses').orderBy('createdAt','asc').onSnapshot(s=>{businesses=s.docs.map(d=>({id:d.id,...d.data()}));renderBizBar();renderBizSelect();renderBizManage();});});
+    window._businesses=businesses;
+    // Apply start biz
+    const sb=sessionStorage.getItem('startBiz');
+    if(sb&&businesses.find(b=>b.id===sb)){curBiz=sb;sessionStorage.removeItem('startBiz');}
+    renderBizBar();renderBizChecks();renderBizSelect();renderBizManage();render();
+  },()=>{
+    db.collection('businesses').orderBy('createdAt','asc').onSnapshot(s=>{
+      businesses=s.docs.map(d=>({id:d.id,...d.data()}));
+      window._businesses=businesses;
+      renderBizBar();renderBizChecks();renderBizSelect();renderBizManage();render();
+    });
+  });
 
-  function getBalance(cid){return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='mile'?t.amount:-t.amount),0);}
+  // HELPERS
+  function getBal(cid){return transactions.filter(t=>t.custId===cid).reduce((s,t)=>s+(t.type==='mile'?t.amount:-t.amount),0);}
+  function fmtDT(ts){if(!ts)return '';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',hour12:true});}
 
-  function fmtDT(ts){
-    if(!ts)return '';
-    const d=ts.toDate?ts.toDate():new Date(ts);
-    return d.toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',hour12:true});
-  }
-
+  // BIZ BAR
   function renderBizBar(){
-    document.getElementById('bizBar').innerHTML=
-      `<div class="sab-btn ${currentBiz==='all'?'active':''}" onclick="setBiz('all')">Sab Businesses</div>`+
-      `<div class="biz-chips-row">`+
-      businesses.map(b=>`<div class="biz-chip ${currentBiz===b.id?'active':''}" onclick="setBiz('${b.id}')">${b.name}</div>`).join('')+
-      `<div class="biz-chip manage" onclick="openModal('businesses')">⚙️ Manage</div>`+
-      `</div>`;
+    document.getElementById('sabBtn').classList.toggle('active',curBiz==='all');
+    document.getElementById('bizChips').innerHTML=
+      businesses.map(b=>`<div class="biz-chip ${curBiz===b.id?'active':''}" onclick="setBiz('${b.id}')">${b.name}</div>`).join('')+
+      `<div class="biz-chip manage" onclick="openModal('biz')">⚙️ Manage</div>`;
   }
 
-  function renderBizSelect(){
-    const el=document.getElementById('bizCheckList');
-    if(!businesses.length){el.innerHTML='<div style="color:var(--muted);font-size:13px">Pehle business banao</div>';return;}
+  function renderBizChecks(){
+    const el=document.getElementById('bizChecks');
+    if(!businesses.length){el.innerHTML='<div style="color:var(--muted);font-size:12px">Pehle business banao</div>';return;}
     el.innerHTML=businesses.map(b=>`
-      <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;cursor:pointer">
-        <input type="checkbox" class="biz-check" value="${b.id}" ${currentBiz===b.id?'checked':''} style="width:18px;height:18px;accent-color:var(--accent)"/>
+      <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--s2);border-radius:8px;cursor:pointer">
+        <input type="checkbox" class="biz-check" value="${b.id}" ${b.id===curBiz?'checked':''} style="width:18px;height:18px;accent-color:var(--accent)"/>
         <span style="font-size:14px">${b.name}</span>
       </label>`).join('');
   }
 
+  function renderBizSelect(){
+    document.getElementById('txBiz').innerHTML='<option value="">-- Select karo --</option>'+
+      businesses.map(b=>`<option value="${b.id}"${b.id===curBiz?' selected':''}>${b.name}</option>`).join('');
+  }
+
   function renderBizManage(){
-    const el=document.getElementById('bizListManage');
+    const el=document.getElementById('bizManageList');
     if(!businesses.length){el.innerHTML='<div class="empty-tx">Koi business nahi</div>';return;}
     el.innerHTML=businesses.map((b,i)=>`
       <div class="biz-list-item">
-        <div style="display:flex;flex-direction:column;gap:2px;margin-right:8px">
-          <button onclick="moveBiz('${b.id}',-1)" style="background:none;border:none;color:${i===0?'var(--border)':'var(--muted)'};font-size:16px;cursor:pointer;padding:0;line-height:1" ${i===0?'disabled':''}>▲</button>
-          <button onclick="moveBiz('${b.id}',1)" style="background:none;border:none;color:${i===businesses.length-1?'var(--border)':'var(--muted)'};font-size:16px;cursor:pointer;padding:0;line-height:1" ${i===businesses.length-1?'disabled':''}>▼</button>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-right:6px">
+          <button onclick="moveBiz('${b.id}',-1)" style="background:none;border:none;color:${i===0?'var(--border)':'var(--muted)'};font-size:14px;cursor:pointer;padding:0" ${i===0?'disabled':''}>▲</button>
+          <button onclick="moveBiz('${b.id}',1)" style="background:none;border:none;color:${i===businesses.length-1?'var(--border)':'var(--muted)'};font-size:14px;cursor:pointer;padding:0" ${i===businesses.length-1?'disabled':''}>▼</button>
         </div>
-        <span style="flex:1;font-size:14px">${b.name}</span>
-        <div style="display:flex;gap:6px">
-          <button style="background:none;border:1px solid var(--accent);color:var(--accent);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer" onclick="editBusiness('${b.id}')">✏️</button>
-          <button class="biz-del-btn" onclick="delBusiness('${b.id}')">×</button>
+        <span>${b.name}</span>
+        <div style="display:flex;gap:6px;margin-left:auto">
+          <button onclick="editBiz('${b.id}')" style="background:none;border:1px solid var(--accent);color:var(--accent);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer">✏️</button>
+          <button onclick="delBiz('${b.id}')" style="background:none;border:none;color:var(--red);font-size:18px;cursor:pointer">×</button>
         </div>
       </div>`).join('');
   }
 
-  function renderUndoList(){
-    const last10=transactions.slice(0,10);
+  function renderUndo(){
     const el=document.getElementById('undoList');
-    if(!last10.length){el.innerHTML='<div class="empty-tx">Koi transaction nahi</div>';return;}
-    el.innerHTML=last10.map(t=>{
-      const cust=customers.find(c=>c.id===t.custId);
-      return `<div class="undo-item">
-        <div class="undo-dot ${t.type}"></div>
-        <div class="undo-info">
-          <div class="undo-name">${cust?.name||'?'} — Rs. ${Number(t.amount).toLocaleString()}</div>
-          <div class="undo-meta">${t.item||''} · ${fmtDT(t.createdAt)}</div>
+    const last=transactions.slice(0,10);
+    if(!last.length){el.innerHTML='<div class="empty-tx">Koi transaction nahi</div>';return;}
+    el.innerHTML=last.map(t=>{
+      const c=customers.find(x=>x.id===t.custId);
+      return `<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:${t.type==='mile'?'var(--green)':'var(--red)'};flex-shrink:0"></div>
+        <div style="flex:1">
+          <div style="font-size:13px">${c?.name||'?'} — Rs. ${Number(t.amount).toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--muted)">${t.item||''} · ${fmtDT(t.createdAt)}</div>
         </div>
-        <button class="undo-del" onclick="undoTx('${t.id}')">Hata do</button>
+        <button onclick="undoTx('${t.id}')" style="background:none;border:1px solid var(--red);color:var(--red);padding:4px 8px;border-radius:6px;font-size:12px;cursor:pointer">Hata do</button>
       </div>`;
     }).join('');
   }
 
-  window.setBiz=id=>{currentBiz=id;renderBizBar();render();};
-  window.addBusiness=()=>{
-    const n=document.getElementById('newBizName').value.trim();if(!n)return;
-    const order=businesses.length;
-    db.collection('businesses').add({name:n,order,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    document.getElementById('newBizName').value='';
-  };
-  window.delBusiness=id=>{if(!confirm('Delete karo?'))return;db.collection('businesses').doc(id).delete();};
-  window.editBusiness=id=>{
-    const biz=businesses.find(b=>b.id===id);
-    if(!biz)return;
-    const newName=prompt('Naya naam:',biz.name);
-    if(!newName||!newName.trim())return;
-    db.collection('businesses').doc(id).update({name:newName.trim()});
-  };
-  window.moveBiz=(id,dir)=>{
-    const idx=businesses.findIndex(b=>b.id===id);
-    const swapIdx=idx+dir;
-    if(swapIdx<0||swapIdx>=businesses.length)return;
-    const batch=db.batch();
-    batch.update(db.collection('businesses').doc(businesses[idx].id),{order:swapIdx});
-    batch.update(db.collection('businesses').doc(businesses[swapIdx].id),{order:idx});
-    batch.commit();
-  };
-
+  // RENDER
   function render(){
     const search=document.getElementById('searchBox').value.toLowerCase();
     let list=customers.filter(c=>c.name.toLowerCase().includes(search));
-    if(currentBiz!=='all')list=list.filter(c=>(c.bizIds||[c.bizId||'']).includes(currentBiz));
-    if(currentFilter==='mile')list=list.filter(c=>getBalance(c.id)>0);
-    if(currentFilter==='diye')list=list.filter(c=>getBalance(c.id)<0);
+    if(curBiz!=='all')list=list.filter(c=>(c.bizIds||[c.bizId||'']).includes(curBiz));
+    if(curFilter==='mile')list=list.filter(c=>getBal(c.id)>0);
+    if(curFilter==='diye')list=list.filter(c=>getBal(c.id)<0);
 
+    // Totals
+    const totList=curBiz==='all'?customers:customers.filter(c=>(c.bizIds||[c.bizId||'']).includes(curBiz));
     let tM=0,tD=0;
-    const totalList=currentBiz==='all'?customers:customers.filter(c=>(c.bizIds||[c.bizId||'']).includes(currentBiz));
-    totalList.forEach(c=>{
-      const b=getBalance(c.id);
-      if(currentFilter==='mile'){if(b>0)tM+=b;}
-      else if(currentFilter==='diye'){if(b<0)tD+=Math.abs(b);}
+    totList.forEach(c=>{
+      const b=getBal(c.id);
+      if(curFilter==='mile'){if(b>0)tM+=b;}
+      else if(curFilter==='diye'){if(b<0)tD+=Math.abs(b);}
       else{if(b>0)tM+=b;else if(b<0)tD+=Math.abs(b);}
     });
-    document.getElementById('totalMile').textContent='Rs. '+tM.toLocaleString();
-    document.getElementById('totalDiye').textContent='Rs. '+tD.toLocaleString();
+    document.getElementById('totMile').textContent='Rs. '+tM.toLocaleString();
+    document.getElementById('totDiye').textContent='Rs. '+tD.toLocaleString();
 
-    if(!list.length){document.getElementById('customerList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>';return;}
+    if(!list.length){document.getElementById('custList').innerHTML='<div class="no-cust"><p>Koi customer nahi</p><small>+ se add karo</small></div>';return;}
 
-    document.getElementById('customerList').innerHTML=list.map(c=>{
-      const bal=getBalance(c.id);
+    document.getElementById('custList').innerHTML=list.map(c=>{
+      const bal=getBal(c.id);
       const bc=bal>0?'mile':bal<0?'diye':'zero';
       const bl=bal>0?'Aap Ko Mile':bal<0?'Aap Ne Diye':'Barabar';
-      const cTx=getMergedTx(c.ids);
-      const custBizIds=c.bizIds||[c.bizId||''];
-      const bizName=custBizIds.map(id=>businesses.find(b=>b.id===id)?.name||'').filter(Boolean).join(', ');
+      const cTx=transactions.filter(t=>t.custId===c.id&&(curBiz==='all'||t.bizId===curBiz));
+      const bizIds=c.bizIds||[c.bizId||''];
+      const bizName=bizIds.map(id=>businesses.find(b=>b.id===id)?.name||'').filter(Boolean).join(', ');
 
-      const txHtml=cTx.length?cTx.map(t=>`
-        <div class="tx-item">
+      const txHtml=cTx.length?cTx.map(t=>{
+        const bizTag=t.bizId&&businesses.find(b=>b.id===t.bizId)?`<span style="font-size:9px;color:var(--accent);background:var(--s2);border:1px solid var(--border);padding:1px 5px;border-radius:6px;margin-left:4px">${businesses.find(b=>b.id===t.bizId).name}</span>`:'';
+        return `<div class="tx-item">
           <div class="tx-dot ${t.type}"></div>
           <div class="tx-detail">
-            <div class="tx-name">${t.item||'Entry'}</div>
-            <div class="tx-date">${fmtDT(t.createdAt)}</div>
-            ${t.photo?`<img class="tx-receipt" src="${t.photo}" onclick="viewImg('${t.photo}')" />`:''}
+            <div class="tx-name">${t.item||'Entry'}${bizTag}</div>
+            <div class="tx-meta">${fmtDT(t.createdAt)}${t.addedBy?' · '+t.addedBy:''}</div>
+            ${t.photo?`<img class="tx-img" src="${t.photo}" onclick="document.getElementById('viewImg').src='${t.photo}';document.getElementById('imgViewer').classList.add('open')" />`:''}
           </div>
           <div class="tx-right">
             <div class="tx-amt ${t.type}">${t.type==='mile'?'+':'-'}Rs. ${Number(t.amount).toLocaleString()}</div>
-            <button class="tx-del" onclick="delTx('${t.id}',event)">×</button>
+            <div class="tx-actions-row">
+              <button class="tx-edit-btn" onclick="openEditTx('${t.id}',event)">✏️</button>
+              <button class="tx-del-btn" onclick="delTx('${t.id}',event)">×</button>
+            </div>
           </div>
-        </div>`).join(''):'<div class="empty-tx">Koi entry nahi</div>';
+        </div>`;
+      }).join(''):'<div class="empty-tx">Koi entry nahi</div>';
 
-      return `<div class="customer-card ${activeId===c.id?'active':''}" id="card-${c.id}">
-        <div class="customer-header" onclick="toggleCust('${c.id}')">
+      return `<div class="cust-card ${activeId===c.id?'active':''}" id="card-${c.id}">
+        <div class="cust-hdr" onclick="toggleCust('${c.id}')">
           <div class="avatar">${c.name.charAt(0).toUpperCase()}</div>
           <div class="cust-info">
             <div class="cust-name">${c.name}</div>
             <div class="cust-meta">${c.phone||''} · ${cTx.length} entry</div>
-            ${bizName?`<span class="cust-biz">${bizName}</span>`:''}
+            ${bizName?`<span class="cust-biz-tag">${bizName}</span>`:''}
           </div>
           <div class="cust-bal">
             <div class="bal-amt ${bc}">Rs. ${Math.abs(bal).toLocaleString()}</div>
             <div class="bal-lbl">${bl}</div>
           </div>
         </div>
-        <div class="transactions">
-          <div class="tx-hdr"><span class="tx-title">Transactions</span><button class="btn-del-cust" onclick="delCust('${c.id}',event)">🗑 Delete</button></div>
+        <div class="tx-section">
+          <div class="tx-hdr"><span class="tx-title">Transactions</span><button class="del-cust-btn" onclick="delCust('${c.id}',event)">🗑 Delete</button></div>
           <div>${txHtml}</div>
-          <div class="tx-actions">
-            <button class="btn-mile" onclick="openTx('${c.id}','mile')">+ Aap Ko Mile</button>
-            <button class="btn-diye" onclick="openTx('${c.id}','diye')">+ Aap Ne Diye</button>
+          <div class="add-tx-btns">
+            <button class="btn-mile" onclick="openAddTx('${c.id}','mile')">+ Aap Ko Mile</button>
+            <button class="btn-diye" onclick="openAddTx('${c.id}','diye')">+ Aap Ne Diye</button>
           </div>
         </div>
       </div>`;
     }).join('');
   }
 
+  // ACTIONS
+  window.setBiz=id=>{curBiz=id;document.getElementById('sabBtn').classList.toggle('active',id==='all');renderBizBar();renderBizChecks();renderBizSelect();render();};
+  window.setFilter=(f,btn)=>{curFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
   window.toggleCust=id=>{activeId=activeId===id?null:id;render();if(activeId)setTimeout(()=>document.getElementById('card-'+id)?.scrollIntoView({behavior:'smooth',block:'start'}),50);};
 
-  window.addCustomer=()=>{
-    const n=document.getElementById('newName').value.trim();
+  window.openAddCust=()=>{
+    document.getElementById('cName').value='';
+    document.getElementById('cPhone').value='';
+    renderBizChecks();
+    openModal('add-cust');
+  };
+
+  window.addCust=()=>{
+    const n=document.getElementById('cName').value.trim();
     if(!n){alert('Naam likho');return;}
-    const selectedBizIds=Array.from(document.querySelectorAll('.biz-check:checked')).map(cb=>cb.value);
-    const btn=document.querySelector('#modal-add-customer .btn-save');
-    if(btn){btn.textContent='Saving...';btn.disabled=true;}
+    const bizIds=Array.from(document.querySelectorAll('.biz-check:checked')).map(cb=>cb.value);
+    const btn=document.getElementById('saveCustBtn');
+    btn.textContent='Saving...';btn.disabled=true;
     db.collection('customers').add({
-      name:n,
-      phone:document.getElementById('newPhone').value.trim(),
-      bizIds:selectedBizIds,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      name:n,phone:document.getElementById('cPhone').value.trim(),
+      bizIds,createdAt:firebase.firestore.FieldValue.serverTimestamp()
     }).then(()=>{
-      document.getElementById('newName').value='';
-      document.getElementById('newPhone').value='';
-      if(btn){btn.textContent='Save';btn.disabled=false;}
-      closeModal('add-customer');
-    }).catch(err=>{
-      alert('Error: '+err.message);
-      if(btn){btn.textContent='Save';btn.disabled=false;}
-    });
+      btn.textContent='Save';btn.disabled=false;
+      closeModal('add-cust');
+    }).catch(e=>{alert('Error: '+e.message);btn.textContent='Save';btn.disabled=false;});
   };
 
-  window.delCust=(id,e)=>{
-    e.stopPropagation();
-    if(!confirm('Delete karo?'))return;
-    db.collection('customers').doc(id).delete();
-    transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete());
-    if(activeId===id)activeId=null;
-  };
+  window.delCust=(id,e)=>{e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('customers').doc(id).delete();transactions.filter(t=>t.custId===id).forEach(t=>db.collection('transactions').doc(t.id).delete());if(activeId===id)activeId=null;};
 
-  window.openTx=(cid,type)=>{
+  window.openAddTx=(cid,type)=>{
     document.getElementById('txCustId').value=cid;
     pickType(type);
     document.getElementById('txAmt').value='';
     document.getElementById('txItem').value='';
     clearPhoto();
-    // Populate and pre-select business
-    const txBizSel=document.getElementById('txBiz');
-    txBizSel.innerHTML='<option value="">-- Select karo --</option>'+businesses.map(b=>`<option value="${b.id}" ${b.id===currentBiz?'selected':''}>${b.name}</option>`).join('');
+    renderBizSelect();
     openModal('add-tx');
   };
 
-  window.pickType=type=>{currentType=type;document.getElementById('btnMile').className='type-btn mile'+(type==='mile'?' sel':'');document.getElementById('btnDiye').className='type-btn diye'+(type==='diye'?' sel':'');};
+  window.pickType=type=>{
+    curType=type;
+    document.getElementById('btnMile').className='type-btn mile'+(type==='mile'?' sel':'');
+    document.getElementById('btnDiye').className='type-btn diye'+(type==='diye'?' sel':'');
+  };
 
   window.addTx=()=>{
     const a=parseFloat(document.getElementById('txAmt').value);
     if(!a||a<=0){alert('Amount likho');return;}
-    const btn=document.querySelector('#modal-add-tx .btn-save');
+    const btn=document.getElementById('saveTxBtn');
     btn.textContent='Saving...';btn.disabled=true;
     const u=sessionStorage.getItem('auth');
     db.collection('transactions').add({
       custId:document.getElementById('txCustId').value,
-      type:currentType,amount:a,
+      type:curType,amount:a,
       item:document.getElementById('txItem').value.trim(),
-      photo:photoBase64||'',
       bizId:document.getElementById('txBiz').value||'',
+      photo:photoB64||'',
       addedBy:u&&USERS[u]?USERS[u].name:'',
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    }).then(()=>{closeModal('add-tx');clearPhoto();btn.textContent='Save';btn.disabled=false;});
+    }).then(()=>{btn.textContent='Save';btn.disabled=false;closeModal('add-tx');clearPhoto();})
+    .catch(e=>{alert('Error: '+e.message);btn.textContent='Save';btn.disabled=false;});
   };
 
   window.delTx=(id,e)=>{e.stopPropagation();if(!confirm('Delete karo?'))return;db.collection('transactions').doc(id).delete();};
-  window.editTx=(id,e)=>{
+  window.undoTx=id=>{if(!confirm('Hata do?'))return;db.collection('transactions').doc(id).delete();};
+
+  window.openEditTx=(id,e)=>{
     e.stopPropagation();
-    const t=transactions.find(x=>x.id===id);
-    if(!t)return;
+    const t=transactions.find(x=>x.id===id);if(!t)return;
     document.getElementById('editTxId').value=id;
-    document.getElementById('editTxAmt').value=t.amount;
-    document.getElementById('editTxItem').value=t.item||'';
-    // Convert createdAt to datetime-local
+    document.getElementById('editAmt').value=t.amount;
+    document.getElementById('editItem').value=t.item||'';
     const d=t.createdAt?.toDate?t.createdAt.toDate():new Date();
-    const local=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
-    document.getElementById('editTxDateTime').value=local;
+    document.getElementById('editDT').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
     openModal('edit-tx');
   };
+
   window.saveEditTx=()=>{
     const id=document.getElementById('editTxId').value;
-    const amt=parseFloat(document.getElementById('editTxAmt').value);
-    if(!amt||amt<=0){alert('Amount likho');return;}
-    const dtVal=document.getElementById('editTxDateTime').value;
-    const newDate=dtVal?new Date(dtVal):new Date();
+    const a=parseFloat(document.getElementById('editAmt').value);
+    if(!a||a<=0){alert('Amount likho');return;}
+    const dtv=document.getElementById('editDT').value;
     db.collection('transactions').doc(id).update({
-      amount:amt,
-      item:document.getElementById('editTxItem').value.trim(),
-      createdAt:firebase.firestore.Timestamp.fromDate(newDate)
+      amount:a,item:document.getElementById('editItem').value.trim(),
+      createdAt:firebase.firestore.Timestamp.fromDate(dtv?new Date(dtv):new Date())
     }).then(()=>closeModal('edit-tx'));
   };
-  window.undoTx=id=>{if(!confirm('Yeh transaction hata do?'))return;db.collection('transactions').doc(id).delete();};
-  window.setFilter=(f,btn)=>{currentFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();};
 
-  window.resetFingerprint=()=>{
-    const u=sessionStorage.getItem('auth');
-    if(!u)return;
-    localStorage.removeItem('fp_cred_'+u);
-    alert('Fingerprint reset ho gaya — dobara register karo');
-    closeModal('settings');
+  // BUSINESS MANAGEMENT
+  window.addBiz=()=>{
+    const n=document.getElementById('newBizName').value.trim();if(!n)return;
+    db.collection('businesses').add({name:n,order:businesses.length,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    document.getElementById('newBizName').value='';
   };
-
-  window.logout=()=>{
-    if(!confirm('Logout karo?'))return;
-    sessionStorage.removeItem('auth');
-    location.reload();
-  };
-
-  window.saveDefaultBiz=()=>{
-    const val=document.getElementById('defaultBizSelect').value;
-    const u=sessionStorage.getItem('auth');
-    if(u) localStorage.setItem('defaultBiz_'+u, val);
-    closeModal('settings');
-    alert('Default business save ho gaya!');
-  };
-
-  // Update settings modal when opened
-  const origOpenModal=window.openModal;
-  window.openModal=n=>{
-    if(n==='settings'){
-      const u=sessionStorage.getItem('auth');
-      const saved=u?localStorage.getItem('defaultBiz_'+u)||'':'';
-      const sel=document.getElementById('defaultBizSelect');
-      sel.innerHTML='<option value="">-- Koi nahi (Sab) --</option>'+
-        businesses.map(b=>`<option value="${b.id}" ${b.id===saved?'selected':''}>${b.name}</option>`).join('');
-    }
-    document.getElementById('modal-'+n).classList.add('open');
-  };
-  window.openAddCustomer=()=>{
-    document.getElementById('newName').value='';
-    document.getElementById('newPhone').value='';
-    renderBizSelect();
-    openModal('add-customer');
+  window.editBiz=id=>{const b=businesses.find(x=>x.id===id);if(!b)return;const n=prompt('Naya naam:',b.name);if(!n||!n.trim())return;db.collection('businesses').doc(id).update({name:n.trim()});};
+  window.delBiz=id=>{if(!confirm('Delete karo?'))return;db.collection('businesses').doc(id).delete();};
+  window.moveBiz=(id,dir)=>{
+    const i=businesses.findIndex(b=>b.id===id);
+    const j=i+dir;if(j<0||j>=businesses.length)return;
+    const batch=db.batch();
+    batch.update(db.collection('businesses').doc(businesses[i].id),{order:j});
+    batch.update(db.collection('businesses').doc(businesses[j].id),{order:i});
+    batch.commit();
   };
 }
-
-const _auth=sessionStorage.getItem('auth');
-if(_auth&&(_auth==='king'||_auth==='farman'))initApp();
 </script>
 </body>
 </html>
