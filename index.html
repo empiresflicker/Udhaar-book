@@ -774,8 +774,22 @@ function initApp(){
     const n=document.getElementById('newName').value.trim();
     if(!n){alert('Naam likho');return;}
     const selectedBizIds=Array.from(document.querySelectorAll('.biz-check:checked')).map(cb=>cb.value);
-    db.collection('customers').add({name:n,phone:document.getElementById('newPhone').value.trim(),bizIds:selectedBizIds,createdAt:firebase.firestore.FieldValue.serverTimestamp()})
-    .then(()=>{document.getElementById('newName').value='';document.getElementById('newPhone').value='';closeModal('add-customer');});
+    const btn=document.querySelector('#modal-add-customer .btn-save');
+    if(btn){btn.textContent='Saving...';btn.disabled=true;}
+    db.collection('customers').add({
+      name:n,
+      phone:document.getElementById('newPhone').value.trim(),
+      bizIds:selectedBizIds,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    }).then(()=>{
+      document.getElementById('newName').value='';
+      document.getElementById('newPhone').value='';
+      if(btn){btn.textContent='Save';btn.disabled=false;}
+      closeModal('add-customer');
+    }).catch(err=>{
+      alert('Error: '+err.message);
+      if(btn){btn.textContent='Save';btn.disabled=false;}
+    });
   };
 
   window.delCust=(id,e)=>{
