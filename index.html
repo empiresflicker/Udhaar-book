@@ -570,7 +570,7 @@ function initApp(){
     render();renderUndo();
   });
 
-  db.collection('businesses').orderBy('order','asc').onSnapshot(s=>{
+  db.collection('businesses').orderBy('createdAt','asc').onSnapshot(s=>{
     businesses=s.docs.map(d=>({id:d.id,...d.data()}));
     window._businesses=businesses;
     // Apply start biz
@@ -811,7 +811,7 @@ function initApp(){
   // BUSINESS MANAGEMENT
   window.addBiz=()=>{
     const n=document.getElementById('newBizName').value.trim();if(!n)return;
-    db.collection('businesses').add({name:n,order:businesses.length,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    db.collection('businesses').add({name:n,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
     document.getElementById('newBizName').value='';
   };
   window.editBiz=id=>{const b=businesses.find(x=>x.id===id);if(!b)return;const n=prompt('Naya naam:',b.name);if(!n||!n.trim())return;db.collection('businesses').doc(id).update({name:n.trim()});};
@@ -819,9 +819,12 @@ function initApp(){
   window.moveBiz=(id,dir)=>{
     const i=businesses.findIndex(b=>b.id===id);
     const j=i+dir;if(j<0||j>=businesses.length)return;
+    // Swap names only since we sort by createdAt
+    const nameI=businesses[i].name;
+    const nameJ=businesses[j].name;
     const batch=db.batch();
-    batch.update(db.collection('businesses').doc(businesses[i].id),{order:j});
-    batch.update(db.collection('businesses').doc(businesses[j].id),{order:i});
+    batch.update(db.collection('businesses').doc(businesses[i].id),{name:nameJ});
+    batch.update(db.collection('businesses').doc(businesses[j].id),{name:nameI});
     batch.commit();
   };
 }
