@@ -551,6 +551,7 @@ function initApp(){
   const fc={apiKey:"AIzaSyDr_nh2KkVJtZ2Pw2jXK5ys_gxdRn6WD8o",authDomain:"udhaar-app-da4dc.firebaseapp.com",projectId:"udhaar-app-da4dc",storageBucket:"udhaar-app-da4dc.firebasestorage.app",messagingSenderId:"471472265354",appId:"1:471472265354:web:2a3c2cf0b459c141493573"};
   if(!firebase.apps.length)firebase.initializeApp(fc);
   const db=firebase.firestore();
+  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
   let customers=[],transactions=[],businesses=[];
   window._businesses=businesses;
