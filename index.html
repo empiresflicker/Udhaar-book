@@ -555,6 +555,8 @@ if(_savedAuth&&USERS[_savedAuth]){
   document.getElementById('lockScreen').style.display='none';
   document.getElementById('mainApp').style.display='block';
   document.getElementById('userNameBadge').textContent=USERS[_savedAuth].emoji+' '+USERS[_savedAuth].name;
+  const _defBiz=localStorage.getItem('defaultBiz_'+_savedAuth);
+  if(_defBiz) sessionStorage.setItem('startBiz',_defBiz);
 }
 
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
@@ -902,7 +904,8 @@ function initApp(){
   };
 }
 
-if(sessionStorage.getItem('auth')==='1')initApp();
+const _auth=sessionStorage.getItem('auth');
+if(_auth&&(_auth==='king'||_auth==='farman'))initApp();
 </script>
 </body>
 </html>
